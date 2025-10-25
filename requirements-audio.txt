@@ -1,0 +1,21 @@
+# Audio & Alerts (Install separately if needed)
+# These dependencies require system-level audio libraries
+
+# Text-to-Speech and Audio Processing
+pyttsx3>=2.90
+PyAudio>=0.2.13  # Requires portaudio19-dev on Linux
+pydub>=0.25.1
+
+# Alternative audio libraries (choose one)
+# pygame>=2.5.0  # Alternative to PyAudio
+# sounddevice>=0.4.6  # Another audio alternative
+
+# Bluetooth Support (Linux only)
+# PyBluez>=0.23  # Requires bluez-dev on Linux
+
+# Platform-specific audio
+# Windows only:
+# pywin32>=306  # Windows API for audio
+
+# macOS only:
+# pyobjc>=9.2  # macOS APIs for audio
