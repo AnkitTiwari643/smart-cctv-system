@@ -158,6 +158,9 @@ class SmartCCTVSystem:
             # Step 1: Object detection
             detections = self.detector.detect(frame)
             
+            logger.info(f"Detected {len(detections)} objects in frame from {frame.camera_id}")
+            logger.info(f"Detected {detections} objects in frame from {frame.camera_id}")
+            
             if not detections:
                 return
             

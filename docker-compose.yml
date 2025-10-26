@@ -19,8 +19,8 @@ services:
       - CAMERA_4_PASSWORD=${CAMERA_4_PASSWORD:-changeme}
       - PYTHONPATH=/app/src
       - YOLO_CONFIG_DIR=/app/models
-    devices:
-      - /dev/snd:/dev/snd  # Audio devices for sound output
+    # devices:
+    #   - /dev/snd:/dev/snd  # Audio devices for sound output
     # For GPU support (uncomment if using NVIDIA GPU)
     # runtime: nvidia
     # environment:

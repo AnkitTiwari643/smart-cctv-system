@@ -236,3 +236,437 @@
 2025-10-25 03:55:22.784 | ERROR    | detection.object_detector:_load_model | Failed to load YOLO model: ❌  Download failure for https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov8n.pt. Retry limit reached. <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1147)>
 2025-10-25 03:55:30.714 | ERROR    | detection.object_detector:_load_model | No local model found and download failed
 2025-10-25 03:55:30.715 | ERROR    | detection.object_detector:_load_model | Failed to load YOLO model: ❌  Download failure for https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov8n.pt. Retry limit reached. <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1147)>
+2025-10-25 22:24:17.344 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:24:17.345 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:24:17.345 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:24:17.346 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:24:22.363 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:24:22.367 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:24:22.371 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:24:22.374 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:24:27.389 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:24:27.391 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:24:27.395 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:24:27.398 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:24:32.416 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:24:32.417 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:24:32.419 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:24:32.420 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:24:37.430 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:24:37.434 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:24:37.437 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:24:37.439 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:24:42.450 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:24:42.451 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:24:42.452 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:24:42.454 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:24:47.469 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:24:47.473 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:24:47.477 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:24:47.479 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:24:52.484 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:24:52.486 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:24:52.488 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:24:52.489 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:24:57.495 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:24:57.496 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:24:57.499 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:24:57.500 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:02.503 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:02.504 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:02.508 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:02.509 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:07.513 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:07.514 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:07.515 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:07.518 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:12.522 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:12.524 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:12.525 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:12.532 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:17.536 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:17.537 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:17.539 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:17.541 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:22.548 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:22.552 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:22.555 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:22.559 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:27.566 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:27.571 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:27.574 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:27.575 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:32.578 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:32.587 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:32.588 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:32.589 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:37.590 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:37.596 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:37.602 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:37.605 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:42.612 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:42.616 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:42.619 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:42.621 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:47.628 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:47.637 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:47.638 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:47.639 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:52.638 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:52.646 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:52.648 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:52.649 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:25:57.646 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:25:57.652 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:25:57.655 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:25:57.657 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:02.655 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:02.657 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:02.666 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:02.666 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:07.665 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:07.666 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:07.674 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:07.675 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:12.684 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:12.693 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:12.700 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:12.703 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:17.708 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:17.709 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:17.712 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:17.714 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:22.714 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:22.718 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:22.720 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:22.723 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:27.728 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:27.730 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:27.734 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:27.737 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:32.750 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:32.755 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:32.758 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:32.764 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:37.787 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:37.779 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:37.785 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:37.776 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:42.796 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:42.797 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:42.799 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:42.800 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:47.811 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:47.815 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:47.818 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:47.821 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:52.832 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:52.834 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:52.837 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:52.839 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:26:57.853 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:26:57.857 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:26:57.862 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:26:57.863 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:02.880 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:02.885 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:02.888 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:02.890 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:07.905 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:07.910 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:07.913 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:07.917 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:12.930 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:12.932 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:12.935 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:12.937 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:17.953 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:17.957 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:17.960 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:17.962 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:22.974 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:22.975 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:22.977 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:22.979 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:27.994 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:27.997 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:28.000 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:28.002 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:33.017 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:33.021 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:33.022 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:33.024 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:38.036 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:38.039 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:38.042 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:38.044 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:43.057 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:43.062 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:43.069 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:43.068 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:48.080 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:48.085 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:48.087 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:48.091 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:53.105 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:53.108 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:53.109 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:27:53.112 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:58.127 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:27:58.128 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:27:58.130 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:27:58.130 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:03.139 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:03.140 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:03.141 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:03.142 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:08.153 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:08.154 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:08.155 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:08.156 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:13.169 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:13.172 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:13.175 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:13.177 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:18.189 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:18.190 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:18.192 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:18.193 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:23.205 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:23.212 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:23.216 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:23.218 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:28.231 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:28.232 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:28.233 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:28.234 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:33.248 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:33.252 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:33.256 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:33.258 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:38.270 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:38.271 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:38.272 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:38.273 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:43.288 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:43.290 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:43.294 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:43.298 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:48.314 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:48.318 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:48.324 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:48.326 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:53.336 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:53.337 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:53.339 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:53.344 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:28:58.351 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:28:58.353 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:28:58.356 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:28:58.358 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:03.372 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:03.376 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:03.379 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:03.380 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:08.392 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:08.395 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:08.398 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:08.401 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:13.418 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:13.421 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:13.425 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:13.428 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:18.442 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:18.449 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:18.450 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:18.451 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:23.461 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:23.462 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:23.463 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:23.464 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:28.476 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:28.478 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:28.480 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:28.481 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:33.492 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:33.495 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:33.496 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:33.498 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:38.503 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:38.505 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:38.507 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:38.510 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:43.522 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:43.524 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:43.525 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:43.527 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:48.538 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:48.539 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:48.541 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:48.544 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:53.554 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:53.555 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:53.556 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:53.560 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:29:58.563 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:29:58.564 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:29:58.567 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:29:58.570 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:03.577 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:03.582 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:03.586 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:03.588 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:08.592 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:08.593 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:08.594 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:08.597 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:13.605 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:13.607 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:13.611 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:13.612 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:18.621 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:18.622 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:18.625 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:18.628 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:23.636 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:23.639 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:23.643 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:23.644 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:28.650 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:28.652 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:28.654 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:28.655 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:33.665 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:33.668 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:33.672 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:33.673 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:38.683 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:38.685 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:38.688 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:38.690 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:43.705 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:43.708 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:43.711 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:43.713 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:48.727 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:48.731 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:48.733 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:48.735 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:53.746 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:53.748 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:53.749 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:53.751 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:30:58.768 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:30:58.770 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:30:58.772 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:30:58.778 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:03.787 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:03.788 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:03.789 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:03.792 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:08.795 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:08.796 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:08.797 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:08.798 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:13.805 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:13.806 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:13.809 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:13.810 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:18.815 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:18.816 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:18.818 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:18.819 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:23.824 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:23.825 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:23.829 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:23.830 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:28.835 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:28.839 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:28.840 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:28.844 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:33.856 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:33.858 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:33.860 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:33.861 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:38.871 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:38.873 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:38.875 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:38.876 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:43.889 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:43.892 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:43.893 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:43.895 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:48.903 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:48.906 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:48.910 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:48.912 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:53.918 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:53.926 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:53.928 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:53.929 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:31:58.933 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:31:58.934 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:31:58.940 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:31:58.941 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:32:03.951 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:32:03.954 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:32:03.955 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:32:03.958 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:32:08.960 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:32:08.961 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:32:08.964 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:32:08.967 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:32:13.972 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:32:13.976 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:32:13.977 | ERROR    | capture.camera_manager:_connect | Failed to connect to Front Door
+2025-10-25 22:32:13.978 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:32:32.620 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:32:32.620 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:32:32.620 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:32:37.633 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:32:37.635 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:32:37.641 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:32:42.646 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:32:42.649 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:32:42.652 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:32:47.659 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:32:47.660 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:32:47.661 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:32:52.667 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:32:52.671 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:32:52.672 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:32:57.678 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:32:57.679 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:32:57.680 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:02.689 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:02.690 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:02.686 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:07.751 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:07.774 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:07.784 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:12.796 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:12.803 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:12.809 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:17.809 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:17.814 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:17.819 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:22.820 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:22.826 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:22.827 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:27.830 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:27.836 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:27.834 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:32.843 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:32.844 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:32.846 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:37.858 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:37.861 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:37.862 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:42.878 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:42.879 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:42.880 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:47.893 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:47.892 | ERROR    | capture.camera_manager:_connect | Failed to connect to Backyard
+2025-10-25 22:33:47.891 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance
+2025-10-25 22:33:52.906 | ERROR    | capture.camera_manager:_connect | Failed to connect to Garage
+2025-10-25 22:33:52.910 | ERROR    | capture.camera_manager:_connect | Failed to connect to Side Entrance

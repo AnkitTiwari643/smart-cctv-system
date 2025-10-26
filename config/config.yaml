@@ -9,7 +9,7 @@ system:
 cameras:
   - id: "camera_1"
     name: "Front Door"
-    url: "rtsp://username:password@<ipAdress>/stream1"
+    url: "rtsp://admin:admin@123@192.168.31.140/cam/realmonitor?channel=1&subtype=0"
     location: "front_entrance"
     enabled: true
     fps: 25
@@ -25,7 +25,7 @@ cameras:
 
   - id: "camera_2"
     name: "Backyard"
-    url: "rtsp://admin:password@<ipAdress>/stream1"
+    url: "rtsp://admin:admin@123@192.168.31.140/cam/realmonitor?channel=2&subtype=0"
     location: "back_yard"
     enabled: true
     fps: 25
@@ -37,7 +37,7 @@ cameras:
 
   - id: "camera_3"
     name: "Side Entrance"
-    url: "rtsp://admin:password@<ipAdress>/stream1"
+    url: "rtsp://admin:admin@123@192.168.31.140/cam/realmonitor?channel=3&subtype=0"
     location: "side_entrance"
     enabled: true
     fps: 25
@@ -45,7 +45,7 @@ cameras:
 
   - id: "camera_4"
     name: "Garage"
-    url: "rtsp://admin:password@<ipAdress>/stream1"
+    url: "rtsp://admin:admin@123@192.168.31.140/cam/realmonitor?channel=4&subtype=0"
     location: "garage"
     enabled: true
     fps: 25
