@@ -47,6 +47,9 @@ class SmartCCTVSystem:
         self.distance_calc = DistanceCalculator(self.config)
         self.alert_manager = AlertManager(self.config)
         
+        # Connect alert manager to database
+        self.alert_manager.set_database(self.db)
+        
         # System state
         self.running = False
         self.frame_count = 0
