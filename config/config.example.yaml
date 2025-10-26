@@ -165,10 +165,10 @@ speakers:
 
 # Text-to-Speech Configuration
 tts:
-  engine: "pyttsx3"  # pyttsx3 or gtts
-  rate: 150          # Words per minute
-  volume: 0.9        # 0.0 to 1.0
-  voice: "default"   # default or specific voice name
+  engine: "gtts"  # pyttsx3 or gtts
+  language: "en" # Language code for gtts
+  tld: "com"  # Top-level domain for gtts
+  slow: false  # Slow speech for gtts
   cache_enabled: true
   cache_dir: "./data/tts_cache"
 
