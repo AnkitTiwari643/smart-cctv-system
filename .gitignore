@@ -1,7 +1,4 @@
 .idea/
 data/
-data/logs/app.log
-data/logs/errors.log
 config/config.yaml
-
 models/Ultralytics/persistent_cache.json
