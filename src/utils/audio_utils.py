@@ -12,9 +12,9 @@ import subprocess
 import platform
 
 try:
-    import pyttsx3
+    from gtts import gTTS
 except ImportError:
-    pyttsx3 = None
+    gTTS = None
 
 try:
     import pygame
@@ -40,10 +40,10 @@ class TTSEngine:
         Args:
             config: TTS configuration
         """
-        self.engine_type = config.get("engine", "pyttsx3")
-        self.rate = config.get("rate", 150)
-        self.volume = config.get("volume", 0.9)
-        self.voice = config.get("voice", "default")
+        self.engine_type = config.get("engine", "gtts")
+        self.language = config.get("language", "en")
+        self.tld = config.get("tld", "com")  # Top-level domain for gtts
+        self.slow = config.get("slow", False)  # Slow speech
         self.cache_enabled = config.get("cache_enabled", True)
         self.cache_dir = Path(config.get("cache_dir", "./data/tts_cache"))
         
@@ -59,25 +59,13 @@ class TTSEngine:
     def _initialize_engine(self):
         """Initialize the TTS engine."""
         try:
-            if self.engine_type == "pyttsx3" and pyttsx3:
-                self.engine = pyttsx3.init()
-                
-                # Set properties
-                self.engine.setProperty('rate', self.rate)
-                self.engine.setProperty('volume', self.volume)
-                
-                # Set voice if specified
-                if self.voice != "default":
-                    voices = self.engine.getProperty('voices')
-                    for voice in voices:
-                        if self.voice.lower() in voice.name.lower():
-                            self.engine.setProperty('voice', voice.id)
-                            break
-                
-                logger.info(f"TTS engine initialized: {self.engine_type}")
+            if self.engine_type == "gtts" and gTTS:
+                # gtts doesn't need persistent initialization like pyttsx3
+                self.engine = "gtts"  # Use string to indicate gtts is available
+                logger.info(f"TTS engine initialized: {self.engine_type} (language: {self.language})")
                 
             else:
-                logger.warning("pyttsx3 not available, using system TTS")
+                logger.warning("gtts not available, using system TTS")
                 self.engine_type = "system"
                 
         except Exception as e:
@@ -103,21 +91,8 @@ class TTSEngine:
                     if cached_file and cached_file.exists():
                         return self._play_audio_file(str(cached_file))
                 
-                if self.engine and self.engine_type == "pyttsx3":
-                    self.engine.say(text)
-                    if blocking:
-                        self.engine.runAndWait()
-                    else:
-                        # Run in separate thread for non-blocking
-                        def speak_thread():
-                            self.engine.runAndWait()
-                        threading.Thread(target=speak_thread, daemon=True).start()
-                    
-                    # Cache the audio if enabled
-                    if self.cache_enabled:
-                        self._cache_audio(text)
-                    
-                    return True
+                if self.engine_type == "gtts" and self.engine == "gtts":
+                    return self._gtts_speak(text, blocking)
                 else:
                     # Fallback to system TTS
                     return self._system_tts(text, blocking)
@@ -130,27 +105,54 @@ class TTSEngine:
         """Get cached audio file path for text."""
         import hashlib
         text_hash = hashlib.md5(text.encode()).hexdigest()
-        return self.cache_dir / f"{text_hash}.wav"
+        return self.cache_dir / f"{text_hash}.mp3"  # gtts uses mp3 format
     
-    def _cache_audio(self, text: str):
-        """Cache audio for text."""
+    def _gtts_speak(self, text: str, blocking: bool = False) -> bool:
+        """Generate speech using gtts and play it."""
         try:
+            # Generate audio file
             cached_file = self._get_cached_audio(text)
-            if not cached_file.exists() and self.engine:
-                # Save to file using pyttsx3
-                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
-                temp_file.close()
+            
+            if not cached_file.exists():
+                # Create new gtts audio
+                tts = gTTS(text=text, lang=self.language, tld=self.tld, slow=self.slow)
+                tts.save(str(cached_file))
+                logger.debug(f"Generated gtts audio: {cached_file}")
+            
+            # Play the audio file
+            if blocking:
+                return self._play_audio_file_blocking(str(cached_file))
+            else:
+                return self._play_audio_file(str(cached_file))
                 
-                self.engine.save_to_file(text, temp_file.name)
-                self.engine.runAndWait()
-                
-                # Move to cache location
-                if os.path.exists(temp_file.name):
-                    os.rename(temp_file.name, str(cached_file))
-                    logger.debug(f"Cached TTS audio: {cached_file}")
-                    
         except Exception as e:
-            logger.warning(f"Failed to cache TTS audio: {e}")
+            logger.error(f"gtts speak error: {e}")
+            return False
+    
+    def _play_audio_file_blocking(self, file_path: str) -> bool:
+        """Play audio file and wait for completion."""
+        try:
+            if pygame:
+                pygame.mixer.music.load(file_path)
+                pygame.mixer.music.play()
+                # Wait for playback to finish
+                while pygame.mixer.music.get_busy():
+                    time.sleep(0.1)
+                return True
+            else:
+                # Fallback to system player (blocking)
+                system = platform.system().lower()
+                if system == "darwin":  # macOS
+                    subprocess.run(["afplay", file_path], check=True)
+                elif system == "windows":
+                    subprocess.run(["start", "/wait", "", file_path], check=True)
+                else:  # Linux
+                    subprocess.run(["aplay", file_path], check=True)
+                return True
+                
+        except Exception as e:
+            logger.error(f"Failed to play audio file (blocking): {e}")
+            return False
     
     def _play_audio_file(self, file_path: str) -> bool:
         """Play audio file."""
@@ -362,9 +364,8 @@ class WiredSpeaker(Speaker):
             if not self.tts_engine:
                 # Create TTS engine for this speaker
                 tts_config = {
-                    "engine": "pyttsx3",
-                    "rate": 150,
-                    "volume": 0.9,
+                    "engine": "gtts",
+                    "language": "en",
                     "cache_enabled": True,
                     "cache_dir": "./data/tts_cache"
                 }
@@ -434,9 +435,8 @@ class BluetoothSpeaker(Speaker):
             if not self.tts_engine:
                 # Create TTS engine for this speaker
                 tts_config = {
-                    "engine": "pyttsx3",
-                    "rate": 150,
-                    "volume": 0.9,
+                    "engine": "gtts",
+                    "language": "en",
                     "cache_enabled": True,
                     "cache_dir": "./data/tts_cache"
                 }

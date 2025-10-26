@@ -11,7 +11,7 @@ PyYAML>=6.0
 python-dotenv>=1.0.0
 
 # Enhanced Audio & Alerts
-pyttsx3>=2.90          # Text-to-speech engine
+gTTS>=2.4.0            # Google Text-to-speech engine
 PyAudio>=0.2.13        # Audio I/O
 pydub>=0.25.1          # Audio processing
 pygame>=2.5.0          # Audio playback
