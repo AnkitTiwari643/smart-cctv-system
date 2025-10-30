@@ -1,16 +1,20 @@
 version: '3.8'
 
 services:
+  # Main CCTV System with Web Interface
   smart-cctv:
     build: .
     container_name: smart-cctv-system
     restart: unless-stopped
-    network_mode: host
+    ports:
+      - "5000:5000"    # Web interface
+      - "8080:8080"    # Optional additional port
     volumes:
       - ./config:/app/config
       - ./data:/app/data
       - ./models:/app/models
       - /etc/localtime:/etc/localtime:ro
+      - sqlite_data:/app/data  # Persistent database storage
     environment:
       - TZ=America/New_York
       - CAMERA_1_PASSWORD=${CAMERA_1_PASSWORD:-changeme}
@@ -19,6 +23,12 @@ services:
       - CAMERA_4_PASSWORD=${CAMERA_4_PASSWORD:-changeme}
       - PYTHONPATH=/app/src
       - YOLO_CONFIG_DIR=/app/models
+      - FLASK_ENV=${FLASK_ENV:-production}
+      - WEB_INTERFACE_SECRET_KEY=${WEB_INTERFACE_SECRET_KEY:-change-this-secret-key}
+      - WEB_INTERFACE_USERNAME=${WEB_INTERFACE_USERNAME:-admin}
+      - WEB_INTERFACE_PASSWORD=${WEB_INTERFACE_PASSWORD:-admin123}
+    networks:
+      - cctv-network
     # devices:
     #   - /dev/snd:/dev/snd  # Audio devices for sound output
     # For GPU support (uncomment if using NVIDIA GPU)
@@ -26,6 +36,65 @@ services:
     # environment:
     #   - NVIDIA_VISIBLE_DEVICES=all
     #   - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Web Interface Only Service (Alternative deployment)
+  smart-cctv-web:
+    build: .
+    container_name: smart-cctv-web-only
+    restart: unless-stopped
+    profiles: ["web-only"]  # Only run when explicitly called
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data:ro  # Read-only access to data
+      - sqlite_data:/app/data  # Database access
+    environment:
+      - PYTHONPATH=/app/src
+      - FLASK_ENV=${FLASK_ENV:-production}
+      - WEB_INTERFACE_SECRET_KEY=${WEB_INTERFACE_SECRET_KEY:-change-this-secret-key}
+      - WEB_INTERFACE_USERNAME=${WEB_INTERFACE_USERNAME:-admin}
+      - WEB_INTERFACE_PASSWORD=${WEB_INTERFACE_PASSWORD:-admin123}
+    command: python run_web.py
+    networks:
+      - cctv-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Demo Service with Sample Data
+  smart-cctv-demo:
+    build: .
+    container_name: smart-cctv-demo
+    restart: unless-stopped
+    profiles: ["demo"]  # Only run when explicitly called
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./config:/app/config
+      - demo_data:/app/data  # Separate demo data
+    environment:
+      - PYTHONPATH=/app/src
+      - FLASK_ENV=development
+      - WEB_INTERFACE_SECRET_KEY=demo-secret-key
+      - WEB_INTERFACE_USERNAME=admin
+      - WEB_INTERFACE_PASSWORD=admin123
+    command: python demo_web.py
+    networks:
+      - cctv-network
     logging:
       driver: "json-file"
       options:
@@ -42,16 +111,33 @@ services:
     environment:
       - PYTHONPATH=/app/src
     command: python scripts/download_models.py --model yolov8n.pt --models-dir /app/models
+    networks:
+      - cctv-network
 
-  # Optional: Web dashboard service
-  # smart-cctv-web:
-  #   build: .
-  #   container_name: smart-cctv-web
-  #   command: python src/web/app.py
-  #   ports:
-  #     - "5000:5000"
-  #   volumes:
-  #     - ./config:/app/config:ro
-  #     - ./data:/app/data:ro
-  #   depends_on:
-  #     - smart-cctv
+  # Database Management Service
+  database-manager:
+    build: .
+    container_name: smart-cctv-db-manager
+    profiles: ["tools"]  # Only run when explicitly called
+    volumes:
+      - sqlite_data:/app/data
+    environment:
+      - PYTHONPATH=/app/src
+    command: python -c "from src.web_interface import init_database; init_database(); print('Database initialized')"
+    networks:
+      - cctv-network
+
+# Networks
+networks:
+  cctv-network:
+    driver: bridge
+    name: smart-cctv-network
+
+# Persistent volumes
+volumes:
+  sqlite_data:
+    driver: local
+    name: smart-cctv-database
+  demo_data:
+    driver: local
+    name: smart-cctv-demo-data

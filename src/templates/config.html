@@ -1,0 +1,788 @@
+{% extends "base.html" %}
+
+{% block title %}Configuration - Smart CCTV System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-6 mb-0">
+            <i class="bi bi-gear text-primary"></i> 
+            System Configuration
+        </h1>
+        <p class="text-muted">Manage cameras, alerts, and system settings</p>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-success" onclick="saveConfiguration()">
+            <i class="bi bi-check-circle"></i> Save Configuration
+        </button>
+        <button class="btn btn-outline-secondary" onclick="resetConfiguration()">
+            <i class="bi bi-arrow-clockwise"></i> Reset
+        </button>
+    </div>
+</div>
+
+<!-- Configuration Tabs -->
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs" id="configTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" type="button" role="tab">
+                    <i class="bi bi-cpu"></i> System
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="cameras-tab" data-bs-toggle="tab" data-bs-target="#cameras" type="button" role="tab">
+                    <i class="bi bi-camera-video"></i> Cameras
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="detection-tab" data-bs-toggle="tab" data-bs-target="#detection" type="button" role="tab">
+                    <i class="bi bi-eye"></i> Detection
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="alerts-tab" data-bs-toggle="tab" data-bs-target="#alerts" type="button" role="tab">
+                    <i class="bi bi-bell"></i> Alerts
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="audio-tab" data-bs-toggle="tab" data-bs-target="#audio" type="button" role="tab">
+                    <i class="bi bi-volume-up"></i> Audio
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="ui-tab" data-bs-toggle="tab" data-bs-target="#ui" type="button" role="tab">
+                    <i class="bi bi-display"></i> Interface
+                </button>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="card-body">
+        <div class="tab-content" id="configTabsContent">
+            <!-- System Configuration -->
+            <div class="tab-pane fade show active" id="system" role="tabpanel">
+                <h5 class="mb-3">System Settings</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="systemName" class="form-label">System Name</label>
+                            <input type="text" class="form-control" id="systemName" value="{{ config.system.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="logLevel" class="form-label">Log Level</label>
+                            <select class="form-select" id="logLevel">
+                                <option value="DEBUG" {% if config.system.log_level == 'DEBUG' %}selected{% endif %}>DEBUG</option>
+                                <option value="INFO" {% if config.system.log_level == 'INFO' %}selected{% endif %}>INFO</option>
+                                <option value="WARNING" {% if config.system.log_level == 'WARNING' %}selected{% endif %}>WARNING</option>
+                                <option value="ERROR" {% if config.system.log_level == 'ERROR' %}selected{% endif %}>ERROR</option>
+                                <option value="CRITICAL" {% if config.system.log_level == 'CRITICAL' %}selected{% endif %}>CRITICAL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="dataDir" class="form-label">Data Directory</label>
+                            <input type="text" class="form-control" id="dataDir" value="{{ config.system.data_dir }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="modelsDir" class="form-label">Models Directory</label>
+                            <input type="text" class="form-control" id="modelsDir" value="{{ config.system.models_dir }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cameras Configuration -->
+            <div class="tab-pane fade" id="cameras" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Camera Configuration</h5>
+                    <button class="btn btn-primary" onclick="addCamera()">
+                        <i class="bi bi-plus-circle"></i> Add Camera
+                    </button>
+                </div>
+                
+                <div id="camerasList">
+                    {% for camera in config.cameras %}
+                    <div class="card mb-3 camera-config" data-camera-index="{{ loop.index0 }}">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">
+                                <i class="bi bi-camera-video"></i> {{ camera.name or 'Camera ' + loop.index|string }}
+                            </h6>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-info" onclick="testCamera({{ loop.index0 }})">
+                                    <i class="bi bi-play"></i> Test
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="removeCamera({{ loop.index0 }})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Camera ID</label>
+                                        <input type="text" class="form-control camera-id" value="{{ camera.id }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Camera Name</label>
+                                        <input type="text" class="form-control camera-name" value="{{ camera.name }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Stream URL</label>
+                                        <input type="text" class="form-control camera-url" value="{{ camera.url }}" placeholder="rtsp://username:password@ip/stream">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Location</label>
+                                        <input type="text" class="form-control camera-location" value="{{ camera.location }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">FPS</label>
+                                        <input type="number" class="form-control camera-fps" value="{{ camera.fps }}" min="1" max="60">
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input camera-enabled" type="checkbox" {% if camera.enabled %}checked{% endif %}>
+                                            <label class="form-check-label">Camera Enabled</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Detection Zones -->
+                            <div class="mt-3">
+                                <h6>Detection Zones</h6>
+                                <div class="zones-container">
+                                    {% for zone in camera.zones or [] %}
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control zone-name" value="{{ zone.name }}" placeholder="Zone name">
+                                        <select class="form-select zone-type" style="max-width: 120px;">
+                                            <option value="critical" {% if zone.type == 'critical' %}selected{% endif %}>Critical</option>
+                                            <option value="warning" {% if zone.type == 'warning' %}selected{% endif %}>Warning</option>
+                                            <option value="info" {% if zone.type == 'info' %}selected{% endif %}>Info</option>
+                                        </select>
+                                        <button class="btn btn-outline-danger" type="button" onclick="removeZone(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="addZone(this)">
+                                    <i class="bi bi-plus"></i> Add Zone
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if not config.cameras %}
+                <div class="text-center py-5">
+                    <i class="bi bi-camera-video-off text-muted display-4"></i>
+                    <h5 class="mt-3 text-muted">No Cameras Configured</h5>
+                    <p class="text-muted">Add your first camera to start monitoring</p>
+                    <button class="btn btn-primary" onclick="addCamera()">
+                        <i class="bi bi-plus-circle"></i> Add Camera
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Detection Configuration -->
+            <div class="tab-pane fade" id="detection" role="tabpanel">
+                <h5 class="mb-3">Object Detection Settings</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="detectionModel" class="form-label">Detection Model</label>
+                            <select class="form-select" id="detectionModel">
+                                <option value="yolov8n" {% if config.processing.detection.model == 'yolov8n' %}selected{% endif %}>YOLOv8 Nano (Fast)</option>
+                                <option value="yolov8s" {% if config.processing.detection.model == 'yolov8s' %}selected{% endif %}>YOLOv8 Small</option>
+                                <option value="yolov8m" {% if config.processing.detection.model == 'yolov8m' %}selected{% endif %}>YOLOv8 Medium</option>
+                                <option value="yolov8l" {% if config.processing.detection.model == 'yolov8l' %}selected{% endif %}>YOLOv8 Large</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="detectionDevice" class="form-label">Processing Device</label>
+                            <select class="form-select" id="detectionDevice">
+                                <option value="cpu" {% if config.processing.detection.device == 'cpu' %}selected{% endif %}>CPU</option>
+                                <option value="cuda:0" {% if config.processing.detection.device == 'cuda:0' %}selected{% endif %}>CUDA GPU</option>
+                                <option value="mps" {% if config.processing.detection.device == 'mps' %}selected{% endif %}>Apple MPS</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confidenceThreshold" class="form-label">Confidence Threshold: <span id="confidenceValue">{{ config.processing.detection.confidence_threshold }}</span></label>
+                            <input type="range" class="form-range" id="confidenceThreshold" min="0.1" max="1.0" step="0.05" value="{{ config.processing.detection.confidence_threshold }}" oninput="updateThresholdValue('confidence')">
+                        </div>
+                        <div class="mb-3">
+                            <label for="nmsThreshold" class="form-label">NMS Threshold: <span id="nmsValue">{{ config.processing.detection.nms_threshold }}</span></label>
+                            <input type="range" class="form-range" id="nmsThreshold" min="0.1" max="1.0" step="0.05" value="{{ config.processing.detection.nms_threshold }}" oninput="updateThresholdValue('nms')">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Object Classes to Detect</label>
+                            <div class="row">
+                                {% set available_classes = ['person', 'car', 'truck', 'motorcycle', 'bicycle', 'dog', 'cat', 'bird', 'bottle', 'cell phone'] %}
+                                {% for class in available_classes %}
+                                <div class="col-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input object-class" type="checkbox" value="{{ class }}" id="class_{{ class }}" 
+                                               {% if class in config.processing.detection.classes_filter %}checked{% endif %}>
+                                        <label class="form-check-label" for="class_{{ class }}">{{ class.title() }}</label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="batchSize" class="form-label">Batch Size</label>
+                            <input type="number" class="form-control" id="batchSize" value="{{ config.processing.detection.batch_size }}" min="1" max="32">
+                        </div>
+                    </div>
+                </div>
+                
+                <h5 class="mb-3 mt-4">Performance Settings</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="fpsLimit" class="form-label">FPS Limit (0 = no limit)</label>
+                            <input type="number" class="form-control" id="fpsLimit" value="{{ config.performance.fps_limit }}" min="0" max="60">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="frameSkip" class="form-label">Frame Skip</label>
+                            <input type="number" class="form-control" id="frameSkip" value="{{ config.performance.frame_skip }}" min="0" max="10">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="threadPoolSize" class="form-label">Thread Pool Size</label>
+                            <input type="number" class="form-control" id="threadPoolSize" value="{{ config.performance.thread_pool_size }}" min="1" max="16">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alert Rules Configuration -->
+            <div class="tab-pane fade" id="alerts" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Alert Rules</h5>
+                    <button class="btn btn-primary" onclick="addAlertRule()">
+                        <i class="bi bi-plus-circle"></i> Add Rule
+                    </button>
+                </div>
+                
+                <div id="alertRulesList">
+                    {% for rule in config.alert_rules or [] %}
+                    <div class="card mb-3 alert-rule" data-rule-index="{{ loop.index0 }}">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">{{ rule.name }}</h6>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-danger" onclick="removeAlertRule({{ loop.index0 }})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Rule Name</label>
+                                        <input type="text" class="form-control rule-name" value="{{ rule.name }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Priority</label>
+                                        <select class="form-select rule-priority">
+                                            <option value="low" {% if rule.priority == 'low' %}selected{% endif %}>Low</option>
+                                            <option value="medium" {% if rule.priority == 'medium' %}selected{% endif %}>Medium</option>
+                                            <option value="high" {% if rule.priority == 'high' %}selected{% endif %}>High</option>
+                                            <option value="critical" {% if rule.priority == 'critical' %}selected{% endif %}>Critical</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input rule-enabled" type="checkbox" {% if rule.enabled %}checked{% endif %}>
+                                            <label class="form-check-label">Rule Enabled</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Object Class</label>
+                                        <select class="form-select rule-object-class">
+                                            <option value="person" {% if rule.conditions.object_class == 'person' %}selected{% endif %}>Person</option>
+                                            <option value="car" {% if rule.conditions.object_class == 'car' %}selected{% endif %}>Car</option>
+                                            <option value="truck" {% if rule.conditions.object_class == 'truck' %}selected{% endif %}>Truck</option>
+                                            <option value="motorcycle" {% if rule.conditions.object_class == 'motorcycle' %}selected{% endif %}>Motorcycle</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Cooldown (seconds)</label>
+                                        <input type="number" class="form-control rule-cooldown" value="{{ rule.cooldown }}" min="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Audio Configuration -->
+            <div class="tab-pane fade" id="audio" role="tabpanel">
+                <h5 class="mb-3">Text-to-Speech Settings</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="ttsEngine" class="form-label">TTS Engine</label>
+                            <select class="form-select" id="ttsEngine">
+                                <option value="gtts" {% if config.tts.engine == 'gtts' %}selected{% endif %}>Google TTS (gtts)</option>
+                                <option value="pyttsx3" {% if config.tts.engine == 'pyttsx3' %}selected{% endif %}>Pyttsx3</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ttsLanguage" class="form-label">Language</label>
+                            <select class="form-select" id="ttsLanguage">
+                                <option value="en" {% if config.tts.language == 'en' %}selected{% endif %}>English</option>
+                                <option value="es" {% if config.tts.language == 'es' %}selected{% endif %}>Spanish</option>
+                                <option value="fr" {% if config.tts.language == 'fr' %}selected{% endif %}>French</option>
+                                <option value="de" {% if config.tts.language == 'de' %}selected{% endif %}>German</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="ttsTld" class="form-label">TLD (for gtts)</label>
+                            <input type="text" class="form-control" id="ttsTld" value="{{ config.tts.tld }}">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ttsCache" {% if config.tts.cache_enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="ttsCache">Enable TTS Cache</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ttsSlow" {% if config.tts.slow %}checked{% endif %}>
+                                <label class="form-check-label" for="ttsSlow">Slow Speech</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h5 class="mb-3 mt-4">Speaker Configuration</h5>
+                <div id="speakersList">
+                    {% for speaker in config.speakers or [] %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control speaker-name" value="{{ speaker.name }}" placeholder="Speaker name">
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select speaker-type">
+                                        <option value="wired" {% if speaker.type == 'wired' %}selected{% endif %}>Wired</option>
+                                        <option value="bluetooth" {% if speaker.type == 'bluetooth' %}selected{% endif %}>Bluetooth</option>
+                                        <option value="group" {% if speaker.type == 'group' %}selected{% endif %}>Group</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input speaker-enabled" type="checkbox" {% if speaker.enabled %}checked{% endif %}>
+                                        <label class="form-check-label">Enabled</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-outline-danger btn-sm" onclick="removeSpeaker(this)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="btn btn-outline-primary" onclick="addSpeaker()">
+                    <i class="bi bi-plus"></i> Add Speaker
+                </button>
+            </div>
+            
+            <!-- UI Configuration -->
+            <div class="tab-pane fade" id="ui" role="tabpanel">
+                <h5 class="mb-3">Web Interface Settings</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="uiEnabled" {% if config.ui.enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="uiEnabled">Enable Web Interface</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="uiHost" class="form-label">Host</label>
+                            <input type="text" class="form-control" id="uiHost" value="{{ config.ui.host }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="uiPort" class="form-label">Port</label>
+                            <input type="number" class="form-control" id="uiPort" value="{{ config.ui.port }}" min="1000" max="65535">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="authEnabled" {% if config.ui.auth_enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="authEnabled">Enable Authentication</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="authUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="authUsername" value="{{ config.ui.username }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="authPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="authPassword" value="{{ config.ui.password }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentConfig = {{ config | tojson }};
+    
+    function updateThresholdValue(type) {
+        const slider = document.getElementById(type + 'Threshold');
+        const display = document.getElementById(type + 'Value');
+        display.textContent = slider.value;
+    }
+    
+    function addCamera() {
+        const container = document.getElementById('camerasList');
+        const index = container.children.length;
+        
+        const cameraHtml = `
+            <div class="card mb-3 camera-config" data-camera-index="${index}">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">
+                        <i class="bi bi-camera-video"></i> New Camera
+                    </h6>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-info" onclick="testCamera(${index})">
+                            <i class="bi bi-play"></i> Test
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="removeCamera(${index})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Camera ID</label>
+                                <input type="text" class="form-control camera-id" value="camera_${index + 1}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Camera Name</label>
+                                <input type="text" class="form-control camera-name" value="Camera ${index + 1}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Stream URL</label>
+                                <input type="text" class="form-control camera-url" placeholder="rtsp://username:password@ip/stream">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Location</label>
+                                <input type="text" class="form-control camera-location">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">FPS</label>
+                                <input type="number" class="form-control camera-fps" value="25" min="1" max="60">
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input camera-enabled" type="checkbox" checked>
+                                    <label class="form-check-label">Camera Enabled</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.insertAdjacentHTML('beforeend', cameraHtml);
+    }
+    
+    function removeCamera(index) {
+        if (confirm('Are you sure you want to remove this camera?')) {
+            const camera = document.querySelector(`[data-camera-index="${index}"]`);
+            camera.remove();
+        }
+    }
+    
+    function testCamera(index) {
+        const camera = document.querySelector(`[data-camera-index="${index}"]`);
+        const url = camera.querySelector('.camera-url').value;
+        
+        if (!url) {
+            showNotification('Error', 'Please enter a stream URL first', 'danger');
+            return;
+        }
+        
+        showNotification('Info', 'Testing camera connection...', 'info');
+        // TODO: Implement camera test
+    }
+    
+    function addZone(button) {
+        const container = button.previousElementSibling;
+        const zoneHtml = `
+            <div class="input-group mb-2">
+                <input type="text" class="form-control zone-name" placeholder="Zone name">
+                <select class="form-select zone-type" style="max-width: 120px;">
+                    <option value="critical">Critical</option>
+                    <option value="warning">Warning</option>
+                    <option value="info">Info</option>
+                </select>
+                <button class="btn btn-outline-danger" type="button" onclick="removeZone(this)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', zoneHtml);
+    }
+    
+    function removeZone(button) {
+        button.closest('.input-group').remove();
+    }
+    
+    function addAlertRule() {
+        const container = document.getElementById('alertRulesList');
+        const index = container.children.length;
+        
+        const ruleHtml = `
+            <div class="card mb-3 alert-rule" data-rule-index="${index}">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">New Alert Rule</h6>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-danger" onclick="removeAlertRule(${index})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Rule Name</label>
+                                <input type="text" class="form-control rule-name" value="New Rule ${index + 1}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Priority</label>
+                                <select class="form-select rule-priority">
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="critical">Critical</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input rule-enabled" type="checkbox" checked>
+                                    <label class="form-check-label">Rule Enabled</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Object Class</label>
+                                <select class="form-select rule-object-class">
+                                    <option value="person" selected>Person</option>
+                                    <option value="car">Car</option>
+                                    <option value="truck">Truck</option>
+                                    <option value="motorcycle">Motorcycle</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Cooldown (seconds)</label>
+                                <input type="number" class="form-control rule-cooldown" value="60" min="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.insertAdjacentHTML('beforeend', ruleHtml);
+    }
+    
+    function removeAlertRule(index) {
+        if (confirm('Are you sure you want to remove this alert rule?')) {
+            const rule = document.querySelector(`[data-rule-index="${index}"]`);
+            rule.remove();
+        }
+    }
+    
+    function addSpeaker() {
+        const container = document.getElementById('speakersList');
+        
+        const speakerHtml = `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control speaker-name" placeholder="Speaker name">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select speaker-type">
+                                <option value="wired">Wired</option>
+                                <option value="bluetooth">Bluetooth</option>
+                                <option value="group">Group</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input speaker-enabled" type="checkbox" checked>
+                                <label class="form-check-label">Enabled</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-danger btn-sm" onclick="removeSpeaker(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.insertAdjacentHTML('beforeend', speakerHtml);
+    }
+    
+    function removeSpeaker(button) {
+        button.closest('.card').remove();
+    }
+    
+    function saveConfiguration() {
+        const config = collectConfiguration();
+        
+        fetch('/api/config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(config)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Success', 'Configuration saved successfully', 'success');
+                currentConfig = config;
+            } else {
+                showNotification('Error', 'Failed to save configuration: ' + data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error', 'Failed to save configuration', 'danger');
+        });
+    }
+    
+    function resetConfiguration() {
+        if (confirm('Are you sure you want to reset all changes?')) {
+            location.reload();
+        }
+    }
+    
+    function collectConfiguration() {
+        const config = {
+            system: {
+                name: document.getElementById('systemName').value,
+                log_level: document.getElementById('logLevel').value,
+                data_dir: document.getElementById('dataDir').value,
+                models_dir: document.getElementById('modelsDir').value
+            },
+            cameras: [],
+            processing: {
+                detection: {
+                    model: document.getElementById('detectionModel').value,
+                    device: document.getElementById('detectionDevice').value,
+                    confidence_threshold: parseFloat(document.getElementById('confidenceThreshold').value),
+                    nms_threshold: parseFloat(document.getElementById('nmsThreshold').value),
+                    classes_filter: Array.from(document.querySelectorAll('.object-class:checked')).map(cb => cb.value),
+                    batch_size: parseInt(document.getElementById('batchSize').value)
+                }
+            },
+            performance: {
+                fps_limit: parseInt(document.getElementById('fpsLimit').value),
+                frame_skip: parseInt(document.getElementById('frameSkip').value),
+                thread_pool_size: parseInt(document.getElementById('threadPoolSize').value)
+            },
+            tts: {
+                engine: document.getElementById('ttsEngine').value,
+                language: document.getElementById('ttsLanguage').value,
+                tld: document.getElementById('ttsTld').value,
+                slow: document.getElementById('ttsSlow').checked,
+                cache_enabled: document.getElementById('ttsCache').checked
+            },
+            ui: {
+                enabled: document.getElementById('uiEnabled').checked,
+                host: document.getElementById('uiHost').value,
+                port: parseInt(document.getElementById('uiPort').value),
+                auth_enabled: document.getElementById('authEnabled').checked,
+                username: document.getElementById('authUsername').value,
+                password: document.getElementById('authPassword').value
+            },
+            alert_rules: [],
+            speakers: []
+        };
+        
+        // Collect cameras
+        document.querySelectorAll('.camera-config').forEach(camera => {
+            config.cameras.push({
+                id: camera.querySelector('.camera-id').value,
+                name: camera.querySelector('.camera-name').value,
+                url: camera.querySelector('.camera-url').value,
+                location: camera.querySelector('.camera-location').value,
+                fps: parseInt(camera.querySelector('.camera-fps').value),
+                enabled: camera.querySelector('.camera-enabled').checked
+            });
+        });
+        
+        // Collect alert rules
+        document.querySelectorAll('.alert-rule').forEach(rule => {
+            config.alert_rules.push({
+                name: rule.querySelector('.rule-name').value,
+                priority: rule.querySelector('.rule-priority').value,
+                enabled: rule.querySelector('.rule-enabled').checked,
+                conditions: {
+                    object_class: rule.querySelector('.rule-object-class').value
+                },
+                cooldown: parseInt(rule.querySelector('.rule-cooldown').value)
+            });
+        });
+        
+        // Collect speakers
+        document.querySelectorAll('#speakersList .card').forEach(speaker => {
+            config.speakers.push({
+                name: speaker.querySelector('.speaker-name').value,
+                type: speaker.querySelector('.speaker-type').value,
+                enabled: speaker.querySelector('.speaker-enabled').checked
+            });
+        });
+        
+        return config;
+    }
+</script>
+{% endblock %}

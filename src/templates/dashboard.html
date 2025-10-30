@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Smart CCTV System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-6 mb-0">
+            <i class="bi bi-speedometer2 text-primary"></i> 
+            Security Dashboard
+        </h1>
+        <p class="text-muted">Real-time monitoring and system overview</p>
+    </div>
+    <div class="col-auto">
+        <div class="d-flex align-items-center">
+            <span class="status-indicator status-online"></span>
+            <span class="text-success fw-bold">System Online</span>
+        </div>
+    </div>
+</div>
+
+<!-- System Overview Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-value text-primary">{{ camera_status.total }}</div>
+            <div class="metric-label">Total Cameras</div>
+            <small class="text-success">
+                <i class="bi bi-arrow-up"></i> {{ camera_status.active }} active
+            </small>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-value text-warning" id="active-alerts">{{ alerts|length }}</div>
+            <div class="metric-label">Recent Alerts</div>
+            <small class="text-muted">Last 24 hours</small>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-value text-info" id="cpu-usage">--</div>
+            <div class="metric-label">CPU Usage</div>
+            <small class="text-muted">Current load</small>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-value text-success" id="memory-usage">--</div>
+            <div class="metric-label">Memory Usage</div>
+            <small class="text-muted">RAM utilization</small>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-graph-up"></i> Alert Trends (Last 7 Days)
+                </h5>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-secondary active" onclick="updateChart('7d')">7D</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="updateChart('30d')">30D</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="updateChart('90d')">90D</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="alertTrendsChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-pie-chart"></i> Alert Distribution
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="alertDistributionChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Alerts and Camera Status -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clock-history"></i> Recent Alerts
+                </h5>
+                <a href="{{ url_for('alerts_page') }}" class="btn btn-sm btn-outline-primary">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                {% if alerts %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Camera</th>
+                                    <th>Type</th>
+                                    <th>Priority</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-alerts-table">
+                                {% for alert in alerts %}
+                                <tr>
+                                    <td>
+                                        <span data-timestamp="{{ alert.timestamp }}">
+                                            {{ alert.timestamp.strftime('%H:%M:%S') if alert.timestamp else 'N/A' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-camera-video text-primary me-1"></i>
+                                        {{ alert.camera_name or alert.camera_id }}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ alert.object_class or alert.alert_type }}</span>
+                                    </td>
+                                    <td>
+                                        {% if alert.priority == 'critical' %}
+                                            <span class="badge bg-danger">Critical</span>
+                                        {% elif alert.priority == 'high' %}
+                                            <span class="badge bg-warning">High</span>
+                                        {% elif alert.priority == 'medium' %}
+                                            <span class="badge bg-info">Medium</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Low</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewAlert({{ alert.id }})">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        {% if alert.snapshot_path %}
+                                        <button class="btn btn-sm btn-outline-info" onclick="viewSnapshot('{{ alert.snapshot_path }}')">
+                                            <i class="bi bi-image"></i>
+                                        </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-shield-check text-success display-4"></i>
+                        <h5 class="mt-3 text-muted">No Recent Alerts</h5>
+                        <p class="text-muted">Your system is secure and running smoothly.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <!-- Camera Status -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-camera-video"></i> Camera Status
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for camera in config.cameras %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center">
+                        <span class="status-indicator {{ 'status-online' if camera.enabled else 'status-offline' }}"></span>
+                        <span class="fw-bold">{{ camera.name }}</span>
+                    </div>
+                    <div>
+                        <span class="badge {{ 'bg-success' if camera.enabled else 'bg-secondary' }}">
+                            {{ 'Active' if camera.enabled else 'Inactive' }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if not config.cameras %}
+                <div class="text-center py-3">
+                    <i class="bi bi-camera-video-off text-muted"></i>
+                    <p class="text-muted mb-0">No cameras configured</p>
+                    <a href="{{ url_for('config_page') }}" class="btn btn-sm btn-outline-primary mt-2">
+                        Configure Cameras
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-lightning"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" onclick="testAlert()">
+                        <i class="bi bi-broadcast"></i> Test Alert System
+                    </button>
+                    <button class="btn btn-warning" onclick="restartSystem()">
+                        <i class="bi bi-arrow-clockwise"></i> Restart Detection
+                    </button>
+                    <button class="btn btn-info" onclick="exportLogs()">
+                        <i class="bi bi-download"></i> Export Logs
+                    </button>
+                    <a href="{{ url_for('config_page') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-gear"></i> System Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Details Modal -->
+<div class="modal fade" id="alertModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Alert Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="alertModalBody">
+                <!-- Content loaded dynamically -->
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="acknowledgeAlert()">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Snapshot Viewer Modal -->
+<div class="modal fade" id="snapshotModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Alert Snapshot</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="snapshotImage" class="img-fluid" style="max-height: 70vh;">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let alertTrendsChart, alertDistributionChart;
+    let selectedAlertId = null;
+    
+    // Initialize charts
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeCharts();
+        updateSystemStatus();
+        
+        // Update system status every 30 seconds
+        setInterval(updateSystemStatus, 30000);
+    });
+    
+    function initializeCharts() {
+        // Alert Trends Chart
+        const ctx1 = document.getElementById('alertTrendsChart').getContext('2d');
+        alertTrendsChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Alerts',
+                    data: [12, 19, 3, 5, 2, 3, 15],
+                    borderColor: '#58a6ff',
+                    backgroundColor: 'rgba(88, 166, 255, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#c9d1d9' }
+                    }
+                },
+                scales: {
+                    x: { 
+                        ticks: { color: '#8b949e' },
+                        grid: { color: '#30363d' }
+                    },
+                    y: { 
+                        ticks: { color: '#8b949e' },
+                        grid: { color: '#30363d' }
+                    }
+                }
+            }
+        });
+        
+        // Alert Distribution Chart
+        const ctx2 = document.getElementById('alertDistributionChart').getContext('2d');
+        alertDistributionChart = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Critical', 'High', 'Medium', 'Low'],
+                datasets: [{
+                    data: [5, 12, 18, 8],
+                    backgroundColor: [
+                        '#f85149',
+                        '#ffd60a', 
+                        '#58a6ff',
+                        '#8b949e'
+                    ],
+                    borderColor: '#21262d',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { 
+                            color: '#c9d1d9',
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function updateSystemStatus() {
+        fetch('/api/system/status')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('cpu-usage').textContent = data.cpu_usage.toFixed(1) + '%';
+                document.getElementById('memory-usage').textContent = data.memory_usage.toFixed(1) + '%';
+                document.getElementById('active-alerts').textContent = data.active_alerts;
+            })
+            .catch(error => console.error('Error fetching system status:', error));
+    }
+    
+    function updateChart(period) {
+        // Update active button
+        document.querySelectorAll('.btn-group .btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // TODO: Fetch data for the selected period and update chart
+        showNotification('Info', `Chart updated for ${period} period`, 'info');
+    }
+    
+    function viewAlert(alertId) {
+        selectedAlertId = alertId;
+        
+        // TODO: Fetch alert details from API
+        const modalBody = document.getElementById('alertModalBody');
+        modalBody.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Alert Information</h6>
+                    <p><strong>ID:</strong> ${alertId}</p>
+                    <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+                    <p><strong>Camera:</strong> Front Door</p>
+                    <p><strong>Type:</strong> Person Detection</p>
+                    <p><strong>Priority:</strong> <span class="badge bg-warning">High</span></p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Detection Details</h6>
+                    <p><strong>Confidence:</strong> 85%</p>
+                    <p><strong>Distance:</strong> 2.5m</p>
+                    <p><strong>Duration:</strong> 15 seconds</p>
+                    <p><strong>Status:</strong> <span class="badge bg-danger">Unacknowledged</span></p>
+                </div>
+            </div>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('alertModal'));
+        modal.show();
+    }
+    
+    function viewSnapshot(snapshotPath) {
+        const img = document.getElementById('snapshotImage');
+        img.src = snapshotPath;
+        
+        const modal = new bootstrap.Modal(document.getElementById('snapshotModal'));
+        modal.show();
+    }
+    
+    function acknowledgeAlert() {
+        if (selectedAlertId) {
+            // TODO: Send acknowledge request to API
+            showNotification('Success', 'Alert acknowledged successfully', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('alertModal')).hide();
+        }
+    }
+    
+    function testAlert() {
+        const alertData = {
+            camera_id: 'test_camera',
+            camera_name: 'Test Camera',
+            alert_type: 'test',
+            object_class: 'person',
+            confidence: 0.95,
+            distance: 2.0,
+            priority: 'high',
+            message: 'This is a test alert from the dashboard',
+            snapshot_path: null
+        };
+        
+        fetch('/api/alerts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(alertData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Success', 'Test alert sent successfully', 'success');
+            } else {
+                showNotification('Error', 'Failed to send test alert', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error', 'Failed to send test alert', 'danger');
+        });
+    }
+    
+    function restartSystem() {
+        if (confirm('Are you sure you want to restart the detection system?')) {
+            showNotification('Info', 'Detection system restart initiated', 'warning');
+            // TODO: Implement system restart
+        }
+    }
+    
+    function exportLogs() {
+        showNotification('Info', 'Exporting logs...', 'info');
+        // TODO: Implement log export
+    }
+</script>
+{% endblock %}

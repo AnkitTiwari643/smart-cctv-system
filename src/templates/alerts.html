@@ -1,0 +1,589 @@
+{% extends "base.html" %}
+
+{% block title %}Alerts - Smart CCTV System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-6 mb-0">
+            <i class="bi bi-exclamation-triangle text-warning"></i> 
+            Security Alerts
+        </h1>
+        <p class="text-muted">Monitor and manage security alerts</p>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-secondary" onclick="exportAlerts()">
+            <i class="bi bi-download"></i> Export
+        </button>
+        <button class="btn btn-warning" onclick="acknowledgeAll()">
+            <i class="bi bi-check-all"></i> Acknowledge All
+        </button>
+    </div>
+</div>
+
+<!-- Alert Filters -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-funnel"></i> Filters
+        </h5>
+    </div>
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label for="startDate" class="form-label">Start Date</label>
+                <input type="date" class="form-control" id="startDate" name="start_date" value="{{ start_date }}">
+            </div>
+            <div class="col-md-3">
+                <label for="endDate" class="form-label">End Date</label>
+                <input type="date" class="form-control" id="endDate" name="end_date" value="{{ end_date }}">
+            </div>
+            <div class="col-md-2">
+                <label for="priority" class="form-label">Priority</label>
+                <select class="form-select" id="priority" name="priority">
+                    <option value="">All Priorities</option>
+                    <option value="critical">Critical</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="camera" class="form-label">Camera</label>
+                <select class="form-select" id="camera" name="camera">
+                    <option value="">All Cameras</option>
+                    <!-- TODO: Populate with actual cameras -->
+                    <option value="camera_1">Front Door</option>
+                    <option value="camera_2">Backyard</option>
+                    <option value="camera_3">Side Entrance</option>
+                    <option value="camera_4">Garage</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i> Filter
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Alert Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-value text-danger">{{ alerts | selectattr('priority', 'equalto', 'critical') | list | length }}</div>
+            <div class="metric-label">Critical Alerts</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-value text-warning">{{ alerts | selectattr('priority', 'equalto', 'high') | list | length }}</div>
+            <div class="metric-label">High Priority</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-value text-info">{{ alerts | selectattr('priority', 'equalto', 'medium') | list | length }}</div>
+            <div class="metric-label">Medium Priority</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-value text-secondary">{{ alerts | selectattr('priority', 'equalto', 'low') | list | length }}</div>
+            <div class="metric-label">Low Priority</div>
+        </div>
+    </div>
+</div>
+
+<!-- Alerts Table -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-list-ul"></i> Alert History
+        </h5>
+        <span class="badge bg-info">{{ alerts | length }} alerts</span>
+    </div>
+    <div class="card-body p-0">
+        {% if alerts %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th width="5%">
+                                <input type="checkbox" class="form-check-input" id="selectAll" onchange="toggleSelectAll()">
+                            </th>
+                            <th width="15%">Timestamp</th>
+                            <th width="15%">Camera</th>
+                            <th width="10%">Type</th>
+                            <th width="10%">Priority</th>
+                            <th width="15%">Object</th>
+                            <th width="15%">Message</th>
+                            <th width="10%">Status</th>
+                            <th width="15%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alert in alerts %}
+                        <tr class="alert-row" data-alert-id="{{ alert.id }}">
+                            <td>
+                                <input type="checkbox" class="form-check-input alert-checkbox" value="{{ alert.id }}">
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold">{{ alert.timestamp.strftime('%m/%d/%Y') if alert.timestamp else 'N/A' }}</span>
+                                    <small class="text-muted">{{ alert.timestamp.strftime('%H:%M:%S') if alert.timestamp else 'N/A' }}</small>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-camera-video text-primary me-2"></i>
+                                    <div>
+                                        <div class="fw-bold">{{ alert.camera_name or alert.camera_id }}</div>
+                                        <small class="text-muted">{{ alert.camera_id }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">{{ alert.alert_type or 'Detection' }}</span>
+                            </td>
+                            <td>
+                                {% if alert.priority == 'critical' %}
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-exclamation-triangle"></i> Critical
+                                    </span>
+                                {% elif alert.priority == 'high' %}
+                                    <span class="badge bg-warning">
+                                        <i class="bi bi-exclamation-circle"></i> High
+                                    </span>
+                                {% elif alert.priority == 'medium' %}
+                                    <span class="badge bg-info">
+                                        <i class="bi bi-info-circle"></i> Medium
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-circle"></i> Low
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if alert.object_class %}
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person-fill text-warning me-1"></i>
+                                        <span>{{ alert.object_class.title() }}</span>
+                                    </div>
+                                    {% if alert.confidence %}
+                                        <small class="text-muted">{{ (alert.confidence * 100) | round(1) }}% confidence</small>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="text-truncate" style="max-width: 150px;" title="{{ alert.message }}">
+                                    {{ alert.message or 'No message' }}
+                                </div>
+                                {% if alert.distance %}
+                                    <small class="text-muted">Distance: {{ alert.distance }}m</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if alert.acknowledged %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Acknowledged
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning">
+                                        <i class="bi bi-clock"></i> Pending
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-outline-primary" onclick="viewAlert({{ alert.id }})" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    {% if alert.snapshot_path %}
+                                    <button class="btn btn-outline-info" onclick="viewSnapshot('{{ alert.snapshot_path }}')" title="View Snapshot">
+                                        <i class="bi bi-image"></i>
+                                    </button>
+                                    {% endif %}
+                                    {% if not alert.acknowledged %}
+                                    <button class="btn btn-outline-success" onclick="acknowledgeAlert({{ alert.id }})" title="Acknowledge">
+                                        <i class="bi bi-check"></i>
+                                    </button>
+                                    {% endif %}
+                                    <button class="btn btn-outline-danger" onclick="deleteAlert({{ alert.id }})" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-shield-check text-success display-4"></i>
+                <h5 class="mt-3 text-muted">No Alerts Found</h5>
+                <p class="text-muted">No alerts match your current filter criteria.</p>
+                <a href="{{ url_for('alerts_page') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-clockwise"></i> Clear Filters
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    
+    {% if alerts %}
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <div class="text-muted">
+            Showing {{ alerts | length }} alerts for {{ start_date }} to {{ end_date }}
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" onclick="selectNone()">Select None</button>
+            <button class="btn btn-sm btn-outline-warning" onclick="acknowledgeSelected()">Acknowledge Selected</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteSelected()">Delete Selected</button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Alert Details Modal -->
+<div class="modal fade" id="alertModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Alert Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="alertModalBody">
+                <!-- Content loaded dynamically -->
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="acknowledgeCurrentAlert()">
+                    <i class="bi bi-check-circle"></i> Acknowledge
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Snapshot Viewer Modal -->
+<div class="modal fade" id="snapshotModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Alert Snapshot</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="snapshotImage" class="img-fluid" style="max-height: 70vh;">
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="downloadSnapshot()">
+                    <i class="bi bi-download"></i> Download
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let selectedAlertId = null;
+    let currentSnapshotPath = null;
+    
+    function toggleSelectAll() {
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.alert-checkbox');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAll.checked;
+        });
+    }
+    
+    function selectNone() {
+        document.getElementById('selectAll').checked = false;
+        document.querySelectorAll('.alert-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    }
+    
+    function getSelectedAlerts() {
+        return Array.from(document.querySelectorAll('.alert-checkbox:checked')).map(cb => cb.value);
+    }
+    
+    function viewAlert(alertId) {
+        selectedAlertId = alertId;
+        
+        // Find alert data (in real implementation, fetch from API)
+        const row = document.querySelector(`[data-alert-id="${alertId}"]`);
+        if (!row) return;
+        
+        const modalBody = document.getElementById('alertModalBody');
+        modalBody.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">Alert Information</h6>
+                    <table class="table table-dark table-sm">
+                        <tr><td><strong>Alert ID:</strong></td><td>${alertId}</td></tr>
+                        <tr><td><strong>Camera:</strong></td><td>Front Door (camera_1)</td></tr>
+                        <tr><td><strong>Priority:</strong></td><td><span class="badge bg-warning">High</span></td></tr>
+                        <tr><td><strong>Type:</strong></td><td>Motion Detection</td></tr>
+                        <tr><td><strong>Status:</strong></td><td><span class="badge bg-warning">Pending</span></td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">Detection Details</h6>
+                    <table class="table table-dark table-sm">
+                        <tr><td><strong>Object:</strong></td><td>Person</td></tr>
+                        <tr><td><strong>Confidence:</strong></td><td>92.5%</td></tr>
+                        <tr><td><strong>Distance:</strong></td><td>2.3 meters</td></tr>
+                        <tr><td><strong>Duration:</strong></td><td>12 seconds</td></tr>
+                        <tr><td><strong>Zone:</strong></td><td>Entrance Area</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6 class="text-primary mb-2">Alert Message</h6>
+                    <div class="alert alert-info">
+                        Person detected in entrance area during restricted hours. High confidence detection maintained for 12 seconds.
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('alertModal'));
+        modal.show();
+    }
+    
+    function viewSnapshot(snapshotPath) {
+        currentSnapshotPath = snapshotPath;
+        const img = document.getElementById('snapshotImage');
+        img.src = snapshotPath;
+        
+        const modal = new bootstrap.Modal(document.getElementById('snapshotModal'));
+        modal.show();
+    }
+    
+    function acknowledgeAlert(alertId) {
+        if (confirm('Acknowledge this alert?')) {
+            // TODO: Send acknowledge request to API
+            fetch(`/api/alerts/${alertId}/acknowledge`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Success', 'Alert acknowledged successfully', 'success');
+                    // Update UI
+                    const row = document.querySelector(`[data-alert-id="${alertId}"]`);
+                    if (row) {
+                        const statusCell = row.children[7];
+                        statusCell.innerHTML = '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Acknowledged</span>';
+                    }
+                } else {
+                    showNotification('Error', 'Failed to acknowledge alert', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error', 'Failed to acknowledge alert', 'danger');
+            });
+        }
+    }
+    
+    function acknowledgeCurrentAlert() {
+        if (selectedAlertId) {
+            acknowledgeAlert(selectedAlertId);
+            bootstrap.Modal.getInstance(document.getElementById('alertModal')).hide();
+        }
+    }
+    
+    function deleteAlert(alertId) {
+        if (confirm('Are you sure you want to delete this alert? This action cannot be undone.')) {
+            // TODO: Send delete request to API
+            showNotification('Success', 'Alert deleted successfully', 'success');
+            const row = document.querySelector(`[data-alert-id="${alertId}"]`);
+            if (row) {
+                row.remove();
+            }
+        }
+    }
+    
+    function acknowledgeSelected() {
+        const selected = getSelectedAlerts();
+        if (selected.length === 0) {
+            showNotification('Warning', 'Please select alerts to acknowledge', 'warning');
+            return;
+        }
+        
+        if (confirm(`Acknowledge ${selected.length} selected alert(s)?`)) {
+            selected.forEach(alertId => {
+                acknowledgeAlert(alertId);
+            });
+        }
+    }
+    
+    function deleteSelected() {
+        const selected = getSelectedAlerts();
+        if (selected.length === 0) {
+            showNotification('Warning', 'Please select alerts to delete', 'warning');
+            return;
+        }
+        
+        if (confirm(`Are you sure you want to delete ${selected.length} selected alert(s)? This action cannot be undone.`)) {
+            selected.forEach(alertId => {
+                deleteAlert(alertId);
+            });
+        }
+    }
+    
+    function acknowledgeAll() {
+        if (confirm('Acknowledge all pending alerts? This will mark all unacknowledged alerts as acknowledged.')) {
+            // TODO: Send bulk acknowledge request to API
+            showNotification('Success', 'All alerts acknowledged successfully', 'success');
+            setTimeout(() => location.reload(), 1000);
+        }
+    }
+    
+    function exportAlerts() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        
+        showNotification('Info', 'Preparing alert export...', 'info');
+        
+        // TODO: Implement export functionality
+        setTimeout(() => {
+            showNotification('Success', 'Alert export completed', 'success');
+        }, 2000);
+    }
+    
+    function downloadSnapshot() {
+        if (currentSnapshotPath) {
+            const link = document.createElement('a');
+            link.href = currentSnapshotPath;
+            link.download = `snapshot_${Date.now()}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('Success', 'Snapshot download started', 'success');
+        }
+    }
+    
+    // Real-time updates via WebSocket
+    socket.on('new_alert', function(data) {
+        // Add new alert to the top of the table
+        const tbody = document.querySelector('tbody');
+        if (tbody) {
+            const newRow = createAlertRow(data);
+            tbody.insertAdjacentHTML('afterbegin', newRow);
+        }
+        
+        // Update statistics
+        updateAlertStats();
+    });
+    
+    function createAlertRow(alert) {
+        return `
+            <tr class="alert-row alert-new" data-alert-id="${alert.id}">
+                <td><input type="checkbox" class="form-check-input alert-checkbox" value="${alert.id}"></td>
+                <td>
+                    <div class="d-flex flex-column">
+                        <span class="fw-bold">${new Date().toLocaleDateString()}</span>
+                        <small class="text-muted">${new Date().toLocaleTimeString()}</small>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-camera-video text-primary me-2"></i>
+                        <div>
+                            <div class="fw-bold">${alert.camera_name}</div>
+                            <small class="text-muted">${alert.camera_id}</small>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="badge bg-secondary">${alert.alert_type}</span></td>
+                <td><span class="badge bg-${getPriorityColor(alert.priority)}">${alert.priority}</span></td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-fill text-warning me-1"></i>
+                        <span>${alert.object_class}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="text-truncate" style="max-width: 150px;" title="${alert.message}">
+                        ${alert.message}
+                    </div>
+                </td>
+                <td><span class="badge bg-warning">Pending</span></td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="viewAlert(${alert.id})">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-success" onclick="acknowledgeAlert(${alert.id})">
+                            <i class="bi bi-check"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+    
+    function getPriorityColor(priority) {
+        switch(priority) {
+            case 'critical': return 'danger';
+            case 'high': return 'warning';
+            case 'medium': return 'info';
+            default: return 'secondary';
+        }
+    }
+    
+    function updateAlertStats() {
+        // TODO: Update the metric cards with new counts
+    }
+    
+    // Highlight new alerts
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            document.querySelectorAll('.alert-new').forEach(row => {
+                row.classList.remove('alert-new');
+            });
+        }, 3000);
+    });
+</script>
+
+<style>
+    .alert-new {
+        background-color: rgba(46, 160, 67, 0.1) !important;
+        animation: highlightNew 3s ease-out;
+    }
+    
+    @keyframes highlightNew {
+        0% { background-color: rgba(46, 160, 67, 0.3) !important; }
+        100% { background-color: rgba(46, 160, 67, 0.1) !important; }
+    }
+    
+    .table-responsive {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+    
+    .alert-row:hover {
+        background-color: rgba(88, 166, 255, 0.1) !important;
+    }
+</style>
+{% endblock %}

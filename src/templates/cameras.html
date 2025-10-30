@@ -1,0 +1,499 @@
+{% extends "base.html" %}
+
+{% block title %}Cameras - Smart CCTV System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-6 mb-0">
+            <i class="bi bi-camera-video text-primary"></i> 
+            Camera Management
+        </h1>
+        <p class="text-muted">Monitor live feeds and manage camera settings</p>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-success" onclick="refreshAllFeeds()">
+            <i class="bi bi-arrow-clockwise"></i> Refresh All
+        </button>
+        <button class="btn btn-outline-secondary" onclick="toggleGridView()">
+            <i class="bi bi-grid-3x3"></i> Toggle View
+        </button>
+    </div>
+</div>
+
+<!-- Camera Grid -->
+<div class="row" id="cameraGrid">
+    {% for camera in cameras %}
+    <div class="col-lg-6 col-xl-4 mb-4 camera-item">
+        <div class="card camera-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="status-indicator {{ 'status-online' if camera.enabled else 'status-offline' }}"></span>
+                    <h6 class="mb-0 ms-2">{{ camera.name }}</h6>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" href="#" onclick="viewFullscreen('{{ camera.id }}')">
+                            <i class="bi bi-arrows-fullscreen me-2"></i>Fullscreen
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="recordStream('{{ camera.id }}')">
+                            <i class="bi bi-record-circle me-2"></i>Record
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="takeSnapshot('{{ camera.id }}')">
+                            <i class="bi bi-camera me-2"></i>Snapshot
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="configureCamera('{{ camera.id }}')">
+                            <i class="bi bi-gear me-2"></i>Settings
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card-body p-0 position-relative">
+                <div class="video-container" style="aspect-ratio: 16/9; background: #000;">
+                    {% if camera.enabled %}
+                        <div class="video-placeholder d-flex align-items-center justify-content-center h-100">
+                            <div class="text-center">
+                                <div class="loading-spinner mb-2"></div>
+                                <small class="text-muted">Loading feed...</small>
+                            </div>
+                        </div>
+                        <!-- In real implementation, this would be a video stream -->
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQwIiBoZWlnaHQ9IjM2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMmQzNzQ4Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzc0ODM5NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxpdmUgRmVlZDwvdGV4dD48L3N2Zz4=" 
+                             class="img-fluid" alt="Live Feed" style="display: none;">
+                    {% else %}
+                        <div class="video-placeholder d-flex align-items-center justify-content-center h-100">
+                            <div class="text-center">
+                                <i class="bi bi-camera-video-off text-muted display-4"></i>
+                                <h6 class="mt-2 text-muted">Camera Offline</h6>
+                                <small class="text-muted">{{ camera.location or 'No location set' }}</small>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Video Overlay Controls -->
+                {% if camera.enabled %}
+                <div class="video-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-dark btn-sm" onclick="playPause('{{ camera.id }}')">
+                            <i class="bi bi-play-fill"></i>
+                        </button>
+                        <button class="btn btn-dark btn-sm" onclick="viewFullscreen('{{ camera.id }}')">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                        </button>
+                        <button class="btn btn-dark btn-sm" onclick="takeSnapshot('{{ camera.id }}')">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="card-footer">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <small class="text-muted d-block">FPS</small>
+                        <span class="fw-bold text-success">{{ camera.fps or 0 }}</span>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted d-block">Quality</small>
+                        <span class="fw-bold text-info">HD</span>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted d-block">Status</small>
+                        <span class="fw-bold {{ 'text-success' if camera.enabled else 'text-danger' }}">
+                            {{ 'Online' if camera.enabled else 'Offline' }}
+                        </span>
+                    </div>
+                </div>
+                
+                {% if camera.location %}
+                <div class="mt-2 text-center">
+                    <small class="text-muted">
+                        <i class="bi bi-geo-alt me-1"></i>{{ camera.location }}
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    {% if not cameras %}
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="bi bi-camera-video-off text-muted display-1"></i>
+            <h3 class="mt-3 text-muted">No Cameras Configured</h3>
+            <p class="text-muted mb-4">Add cameras to start monitoring your security system</p>
+            <a href="{{ url_for('config_page') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Configure Cameras
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Fullscreen Video Modal -->
+<div class="modal fade" id="fullscreenModal" tabindex="-1">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content bg-black">
+            <div class="modal-header bg-dark border-secondary">
+                <h5 class="modal-title" id="fullscreenTitle">Camera View</h5>
+                <div class="btn-group me-3">
+                    <button class="btn btn-outline-light btn-sm" onclick="takeSnapshot()">
+                        <i class="bi bi-camera"></i> Snapshot
+                    </button>
+                    <button class="btn btn-outline-light btn-sm" onclick="recordStream()">
+                        <i class="bi bi-record-circle"></i> Record
+                    </button>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0 d-flex align-items-center justify-content-center">
+                <div class="fullscreen-video-container">
+                    <img id="fullscreenVideo" src="" class="img-fluid" alt="Fullscreen Feed">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Camera Settings Modal -->
+<div class="modal fade" id="cameraSettingsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Camera Settings</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="cameraSettingsBody">
+                <!-- Settings loaded dynamically -->
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveCameraSettings()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentCamera = null;
+    let isGridView = true;
+    let videoStreams = new Map();
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeCameraFeeds();
+        setupVideoOverlays();
+    });
+    
+    function initializeCameraFeeds() {
+        // Simulate loading camera feeds
+        document.querySelectorAll('.video-placeholder').forEach((placeholder, index) => {
+            setTimeout(() => {
+                const img = placeholder.parentElement.querySelector('img');
+                if (img) {
+                    placeholder.style.display = 'none';
+                    img.style.display = 'block';
+                    
+                    // Simulate updating FPS
+                    updateCameraStats(index);
+                }
+            }, (index + 1) * 1000);
+        });
+    }
+    
+    function setupVideoOverlays() {
+        document.querySelectorAll('.video-container').forEach(container => {
+            const overlay = container.querySelector('.video-overlay');
+            if (overlay) {
+                container.addEventListener('mouseenter', () => {
+                    overlay.classList.remove('opacity-0');
+                    overlay.classList.add('opacity-100');
+                });
+                
+                container.addEventListener('mouseleave', () => {
+                    overlay.classList.remove('opacity-100');
+                    overlay.classList.add('opacity-0');
+                });
+            }
+        });
+    }
+    
+    function updateCameraStats(cameraIndex) {
+        // Simulate real-time stats updates
+        const cards = document.querySelectorAll('.camera-card');
+        if (cards[cameraIndex]) {
+            const fpsElement = cards[cameraIndex].querySelector('.fw-bold.text-success');
+            if (fpsElement) {
+                const fps = Math.floor(Math.random() * 5) + 25; // Random FPS between 25-30
+                fpsElement.textContent = fps;
+            }
+        }
+    }
+    
+    function refreshAllFeeds() {
+        showNotification('Info', 'Refreshing all camera feeds...', 'info');
+        
+        // Reset all feeds
+        document.querySelectorAll('.video-container img').forEach(img => {
+            img.style.display = 'none';
+        });
+        
+        document.querySelectorAll('.video-placeholder').forEach(placeholder => {
+            placeholder.style.display = 'flex';
+        });
+        
+        // Reinitialize feeds
+        setTimeout(() => {
+            initializeCameraFeeds();
+            showNotification('Success', 'All camera feeds refreshed', 'success');
+        }, 1000);
+    }
+    
+    function toggleGridView() {
+        const grid = document.getElementById('cameraGrid');
+        const items = document.querySelectorAll('.camera-item');
+        
+        if (isGridView) {
+            // Switch to list view
+            items.forEach(item => {
+                item.className = 'col-12 mb-4 camera-item';
+            });
+            isGridView = false;
+        } else {
+            // Switch to grid view
+            items.forEach(item => {
+                item.className = 'col-lg-6 col-xl-4 mb-4 camera-item';
+            });
+            isGridView = true;
+        }
+    }
+    
+    function viewFullscreen(cameraId) {
+        currentCamera = cameraId;
+        const camera = getCameraData(cameraId);
+        
+        document.getElementById('fullscreenTitle').textContent = `${camera.name} - Live Feed`;
+        document.getElementById('fullscreenVideo').src = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMyZDM3NDgiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmaWxsPSIjNzQ4Mzk0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+RnVsbHNjcmVlbiBGZWVkIC0gJHtjYW1lcmEubmFtZX08L3RleHQ+PC9zdmc+`;
+        
+        const modal = new bootstrap.Modal(document.getElementById('fullscreenModal'));
+        modal.show();
+    }
+    
+    function configureCamera(cameraId) {
+        currentCamera = cameraId;
+        const camera = getCameraData(cameraId);
+        
+        const settingsBody = document.getElementById('cameraSettingsBody');
+        settingsBody.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">Basic Settings</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Camera Name</label>
+                        <input type="text" class="form-control" value="${camera.name}" id="settingName">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" value="${camera.location || ''}" id="settingLocation">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">FPS</label>
+                        <input type="number" class="form-control" value="${camera.fps || 25}" id="settingFps" min="1" max="60">
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" ${camera.enabled ? 'checked' : ''} id="settingEnabled">
+                            <label class="form-check-label" for="settingEnabled">Camera Enabled</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3">Advanced Settings</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Stream URL</label>
+                        <input type="text" class="form-control" value="${camera.url || ''}" id="settingUrl">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Resolution</label>
+                        <select class="form-select" id="settingResolution">
+                            <option value="1920x1080">1920x1080 (Full HD)</option>
+                            <option value="1280x720">1280x720 (HD)</option>
+                            <option value="640x480">640x480 (SD)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Recording Quality</label>
+                        <select class="form-select" id="settingQuality">
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="settingNightVision">
+                            <label class="form-check-label" for="settingNightVision">Night Vision</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h6 class="text-primary mb-3">Detection Zones</h6>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Detection zones can be configured in the main Configuration page.
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('cameraSettingsModal'));
+        modal.show();
+    }
+    
+    function getCameraData(cameraId) {
+        // In real implementation, this would fetch from the server
+        const cameras = {{ cameras | tojson }};
+        return cameras.find(c => c.id === cameraId) || {};
+    }
+    
+    function saveCameraSettings() {
+        if (!currentCamera) return;
+        
+        const settings = {
+            name: document.getElementById('settingName').value,
+            location: document.getElementById('settingLocation').value,
+            fps: parseInt(document.getElementById('settingFps').value),
+            enabled: document.getElementById('settingEnabled').checked,
+            url: document.getElementById('settingUrl').value,
+            resolution: document.getElementById('settingResolution').value,
+            quality: document.getElementById('settingQuality').value,
+            nightVision: document.getElementById('settingNightVision').checked
+        };
+        
+        // TODO: Send settings to server
+        showNotification('Success', 'Camera settings saved successfully', 'success');
+        bootstrap.Modal.getInstance(document.getElementById('cameraSettingsModal')).hide();
+        
+        // Update UI
+        setTimeout(() => location.reload(), 1000);
+    }
+    
+    function playPause(cameraId) {
+        // TODO: Implement play/pause functionality
+        showNotification('Info', 'Play/Pause functionality will be implemented', 'info');
+    }
+    
+    function takeSnapshot(cameraId = null) {
+        const camera = cameraId || currentCamera;
+        if (!camera) return;
+        
+        showNotification('Success', `Snapshot captured for ${getCameraData(camera).name}`, 'success');
+        
+        // TODO: Implement actual snapshot capture
+        // This would typically send a request to capture and save a frame
+    }
+    
+    function recordStream(cameraId = null) {
+        const camera = cameraId || currentCamera;
+        if (!camera) return;
+        
+        const cameraData = getCameraData(camera);
+        if (confirm(`Start recording ${cameraData.name}?`)) {
+            showNotification('Info', `Recording started for ${cameraData.name}`, 'warning');
+            
+            // TODO: Implement actual recording functionality
+            // This would start/stop video recording
+        }
+    }
+    
+    // Simulate real-time updates
+    setInterval(() => {
+        document.querySelectorAll('.camera-card').forEach((card, index) => {
+            updateCameraStats(index);
+        });
+    }, 5000);
+    
+    // WebSocket events for camera status updates
+    socket.on('camera_status', function(data) {
+        const cameraCard = document.querySelector(`[data-camera-id="${data.camera_id}"]`);
+        if (cameraCard) {
+            const statusIndicator = cameraCard.querySelector('.status-indicator');
+            const statusText = cameraCard.querySelector('.fw-bold');
+            
+            if (data.online) {
+                statusIndicator.className = 'status-indicator status-online';
+                statusText.textContent = 'Online';
+                statusText.className = 'fw-bold text-success';
+            } else {
+                statusIndicator.className = 'status-indicator status-offline';
+                statusText.textContent = 'Offline';
+                statusText.className = 'fw-bold text-danger';
+            }
+        }
+    });
+</script>
+
+<style>
+    .camera-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .camera-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .video-overlay {
+        transition: opacity 0.3s ease;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(2px);
+    }
+    
+    .video-container {
+        overflow: hidden;
+        border-radius: 0;
+    }
+    
+    .video-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .fullscreen-video-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .fullscreen-video-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
+    @media (max-width: 768px) {
+        .camera-item {
+            margin-bottom: 1rem;
+        }
+        
+        .card-footer .row {
+            font-size: 0.875rem;
+        }
+    }
+</style>
+{% endblock %}

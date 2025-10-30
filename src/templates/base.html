@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart CCTV System{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    
+    <style>
+        :root {
+            --bs-dark-rgb: 13, 17, 23;
+            --bs-body-bg: rgb(var(--bs-dark-rgb));
+            --sidebar-width: 250px;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #21262d 0%, #161b22 100%);
+            border-right: 1px solid #30363d;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-brand {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid #30363d;
+            background: rgba(33, 38, 45, 0.8);
+        }
+        
+        .sidebar-brand h4 {
+            color: #58a6ff;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-link {
+            color: #c9d1d9 !important;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link:hover {
+            background: rgba(88, 166, 255, 0.1);
+            border-left-color: #58a6ff;
+            color: #58a6ff !important;
+        }
+        
+        .nav-link.active {
+            background: rgba(88, 166, 255, 0.2);
+            border-left-color: #58a6ff;
+            color: #58a6ff !important;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .card {
+            background: rgba(33, 38, 45, 0.8);
+            border: 1px solid #30363d;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-header {
+            background: rgba(22, 27, 34, 0.8);
+            border-bottom: 1px solid #30363d;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2ea043 0%, #238636 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(46, 160, 67, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #da3633 0%, #f85149 100%);
+            border: none;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #fb8500 0%, #ffd60a 100%);
+            border: none;
+            color: #000;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .alert-success {
+            background: rgba(46, 160, 67, 0.2);
+            color: #2ea043;
+            border-left: 4px solid #2ea043;
+        }
+        
+        .alert-danger {
+            background: rgba(248, 81, 73, 0.2);
+            color: #f85149;
+            border-left: 4px solid #f85149;
+        }
+        
+        .alert-warning {
+            background: rgba(255, 214, 10, 0.2);
+            color: #ffd60a;
+            border-left: 4px solid #ffd60a;
+        }
+        
+        .alert-info {
+            background: rgba(88, 166, 255, 0.2);
+            color: #58a6ff;
+            border-left: 4px solid #58a6ff;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-online {
+            background: #2ea043;
+            box-shadow: 0 0 8px rgba(46, 160, 67, 0.5);
+        }
+        
+        .status-offline {
+            background: #f85149;
+            box-shadow: 0 0 8px rgba(248, 81, 73, 0.5);
+        }
+        
+        .status-warning {
+            background: #ffd60a;
+            box-shadow: 0 0 8px rgba(255, 214, 10, 0.5);
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, rgba(33, 38, 45, 0.9) 0%, rgba(22, 27, 34, 0.9) 100%);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        
+        .metric-label {
+            color: #8b949e;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .form-control, .form-select {
+            background: rgba(33, 38, 45, 0.8);
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(33, 38, 45, 0.9);
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+            color: #c9d1d9;
+        }
+        
+        .table-dark {
+            background: rgba(33, 38, 45, 0.8);
+            border: 1px solid #30363d;
+        }
+        
+        .table-dark th {
+            background: rgba(22, 27, 34, 0.9);
+            border-color: #30363d;
+        }
+        
+        .table-dark td {
+            border-color: #30363d;
+        }
+        
+        .nav-tabs .nav-link {
+            background: rgba(33, 38, 45, 0.8);
+            border: 1px solid #30363d;
+            color: #8b949e;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: rgba(88, 166, 255, 0.2);
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(88, 166, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #58a6ff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .toast {
+            background: rgba(33, 38, 45, 0.95);
+            border: 1px solid #30363d;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .mobile-toggle {
+                display: block !important;
+            }
+        }
+        
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: rgba(33, 38, 45, 0.9);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 0.5rem;
+            color: #c9d1d9;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Mobile Toggle Button -->
+    <button class="btn mobile-toggle" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <h4><i class="bi bi-camera-video"></i> Smart CCTV</h4>
+            <small class="text-muted">Security System</small>
+        </div>
+        
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'alerts_page' %}active{% endif %}" href="{{ url_for('alerts_page') }}">
+                    <i class="bi bi-exclamation-triangle me-2"></i> Alerts
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'cameras_page' %}active{% endif %}" href="{{ url_for('cameras_page') }}">
+                    <i class="bi bi-camera-video me-2"></i> Cameras
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'config_page' %}active{% endif %}" href="{{ url_for('config_page') }}">
+                    <i class="bi bi-gear me-2"></i> Configuration
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'system_page' %}active{% endif %}" href="{{ url_for('system_page') }}">
+                    <i class="bi bi-cpu me-2"></i> System
+                </a>
+            </li>
+            <li class="nav-item mt-3">
+                <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="toast-container position-fixed top-0 end-0 p-3">
+                    {% for category, message in messages %}
+                        <div class="toast show" role="alert">
+                            <div class="toast-header">
+                                <strong class="me-auto">
+                                    {% if category == 'error' %}
+                                        <i class="bi bi-exclamation-triangle text-danger"></i> Error
+                                    {% elif category == 'success' %}
+                                        <i class="bi bi-check-circle text-success"></i> Success
+                                    {% elif category == 'warning' %}
+                                        <i class="bi bi-exclamation-circle text-warning"></i> Warning
+                                    {% else %}
+                                        <i class="bi bi-info-circle text-info"></i> Info
+                                    {% endif %}
+                                </strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                            </div>
+                            <div class="toast-body">{{ message }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Initialize Socket.IO
+        const socket = io();
+        
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+        
+        socket.on('new_alert', function(data) {
+            showNotification('New Alert', data.message || 'Alert detected', 'danger');
+            // Refresh alerts if on alerts page
+            if (window.location.pathname.includes('/alerts')) {
+                location.reload();
+            }
+        });
+        
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggleBtn.contains(event.target) &&
+                sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
+        });
+        
+        // Notification function
+        function showNotification(title, message, type = 'info') {
+            const toastContainer = document.querySelector('.toast-container') || 
+                                 (() => {
+                                     const container = document.createElement('div');
+                                     container.className = 'toast-container position-fixed top-0 end-0 p-3';
+                                     document.body.appendChild(container);
+                                     return container;
+                                 })();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <strong class="me-auto">
+                        <i class="bi bi-${type === 'danger' ? 'exclamation-triangle text-danger' : 
+                                        type === 'success' ? 'check-circle text-success' :
+                                        type === 'warning' ? 'exclamation-circle text-warning' :
+                                        'info-circle text-info'}"></i> ${title}
+                    </strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">${message}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // Remove toast element after it's hidden
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+        
+        // Auto-hide toasts after 5 seconds
+        document.querySelectorAll('.toast.show').forEach(toast => {
+            setTimeout(() => {
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.hide();
+            }, 5000);
+        });
+        
+        // Update timestamps every minute
+        function updateTimestamps() {
+            document.querySelectorAll('[data-timestamp]').forEach(element => {
+                const timestamp = new Date(element.dataset.timestamp);
+                element.textContent = formatTimeAgo(timestamp);
+            });
+        }
+        
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 0) return `${days}d ago`;
+            if (hours > 0) return `${hours}h ago`;
+            if (minutes > 0) return `${minutes}m ago`;
+            return 'Just now';
+        }
+        
+        setInterval(updateTimestamps, 60000);
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

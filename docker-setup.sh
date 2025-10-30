@@ -1,8 +1,8 @@
 #!/bin/bash
-# Setup script for Smart CCTV System Docker deployment
+# Setup script for Smart CCTV System Docker deployment with Web Interface
 
-echo "🐳 Smart CCTV System - Docker Setup"
-echo "===================================="
+echo "🐳 Smart CCTV System - Docker Setup with Web Interface"
+echo "====================================================="
 
 # Check if we're in the right directory
 if [ ! -f "docker-compose.yml" ]; then
@@ -29,7 +29,7 @@ echo "✅ Docker Compose installed"
 # 3. Create necessary directories
 echo "📁 Creating required directories..."
 mkdir -p config data models
-mkdir -p data/logs data/snapshots data/tts_cache
+mkdir -p data/logs data/snapshots data/tts_cache data/web
 echo "✅ Directories created"
 
 # 4. Setup configuration
@@ -70,18 +70,15 @@ echo "✅ Permissions set"
 # 6. Create .env file for environment variables
 echo "🔐 Setting up environment variables..."
 if [ ! -f ".env" ]; then
-    cat > .env << 'EOF'
-# Camera passwords (change these!)
-CAMERA_1_PASSWORD=changeme
-CAMERA_2_PASSWORD=changeme
-CAMERA_3_PASSWORD=changeme
-CAMERA_4_PASSWORD=changeme
-
-# Timezone
-TZ=America/New_York
-EOF
-    echo "✅ Created .env file with default values"
-    echo "🔐 Please edit .env file to set your camera passwords"
+    cp .env.example .env
+    echo "✅ Created .env file from template"
+    echo "🔐 Please edit .env file to customize settings"
+    
+    # Generate a random secret key
+    SECRET_KEY=$(openssl rand -hex 32 2>/dev/null || date +%s | sha256sum | base64 | head -c 32)
+    sed -i.bak "s/your-very-secure-secret-key-here-change-this/$SECRET_KEY/" .env 2>/dev/null || true
+    
+    echo "🔑 Generated random secret key for web interface"
 else
     echo "✅ Environment file already exists"
 fi
@@ -89,21 +86,55 @@ fi
 echo ""
 echo "🎉 Setup completed successfully!"
 echo ""
+echo "🌟 Available Services:"
+echo "• Complete System: docker-compose up"
+echo "• Demo Mode: docker-compose --profile demo up" 
+echo "• Web Interface Only: docker-compose --profile web-only up"
+echo ""
+echo "🌐 Web Interface Features:"
+echo "• Dashboard: Real-time monitoring"
+echo "• Configuration: Easy YAML editing"
+echo "• Alerts: Manage security alerts"
+echo "• Cameras: Live feed monitoring"
+echo "• System: Performance monitoring"
+echo ""
+echo "� Access URLs:"
+echo "• Web Interface: http://localhost:5000"
+echo "• Default Login: admin / admin123"
+echo ""
 echo "Next steps:"
 echo "1. Edit config/config.yaml with your camera URLs and settings"
-echo "2. Edit .env file to set camera passwords"
-echo "3. Run: docker-compose up --build"
+echo "2. Edit .env file to customize security settings"
+echo "3. Choose a deployment option below"
 echo ""
-echo "Troubleshooting:"
-echo "• Check logs: docker-compose logs -f"
-echo "• Restart: docker-compose restart"
-echo "• Stop: docker-compose down"
+echo "Deployment Options:"
+echo "a) Complete System (CCTV detection + Web UI)"
+echo "b) Demo Mode (Sample data for testing)"
+echo "c) Web Interface Only"
+echo "d) Exit for manual setup"
 echo ""
 
-# Option to start immediately
-read -p "Do you want to start the system now? (y/N): " -n 1 -r
+# Deployment option selection
+read -p "Select deployment option (a/b/c/d): " -n 1 -r
 echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "🚀 Starting Smart CCTV System..."
-    docker-compose up --build
-fi
+case $REPLY in
+    a|A)
+        echo "🚀 Starting Complete Smart CCTV System..."
+        docker-compose up --build
+        ;;
+    b|B)
+        echo "🎬 Starting Demo Mode with Sample Data..."
+        docker-compose --profile demo up --build
+        ;;
+    c|C)
+        echo "🌐 Starting Web Interface Only..."
+        docker-compose --profile web-only up --build
+        ;;
+    d|D)
+        echo "✋ Manual setup chosen"
+        echo "Run 'docker-compose up --build' when ready"
+        ;;
+    *)
+        echo "Invalid option. Run 'docker-compose up --build' when ready"
+        ;;
+esac

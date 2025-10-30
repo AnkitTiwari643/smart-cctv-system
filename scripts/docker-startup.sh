@@ -1,5 +1,5 @@
 #!/bin/bash
-# Docker startup script for Smart CCTV System
+# Docker startup script for Smart CCTV System with Web Interface
 
 set -e
 
@@ -7,12 +7,26 @@ echo "🚀 Smart CCTV System - Docker Startup"
 echo "====================================="
 
 # Create required directories
-mkdir -p /app/models /app/data/logs /app/data/snapshots /app/data/tts_cache
+mkdir -p /app/models /app/data/logs /app/data/snapshots /app/data/tts_cache /app/data/web
 
 # Set proper permissions
 # chown -R cctv:cctv /app/models /app/data || true
 
 echo "📁 Directory structure created"
+
+# Initialize database if it doesn't exist
+echo "📊 Initializing database..."
+python -c "
+import sys
+sys.path.append('/app/src')
+try:
+    from web_interface import init_database
+    init_database()
+    print('✅ Database initialized')
+except Exception as e:
+    print(f'⚠️ Database initialization failed: {e}')
+    print('Will attempt to initialize at runtime')
+"
 
 # Download YOLO models
 echo "🤖 Downloading YOLO models..."
@@ -41,10 +55,16 @@ except ImportError:
     print('⚠️ Ultralytics not available')
 
 try:
-    import pyaudio, pyttsx3
-    print('✅ Audio dependencies available')
+    import flask, flask_socketio
+    print('✅ Web interface dependencies available')
 except ImportError:
-    print('⚠️ Audio dependencies not available (detection-only mode)')
+    print('⚠️ Web interface dependencies not available')
+
+try:
+    from gtts import gTTS
+    print('✅ gTTS (Google Text-to-Speech) available')
+except ImportError:
+    print('⚠️ gTTS not available - audio alerts disabled')
 "
 
 # Check if config exists
@@ -76,9 +96,12 @@ else
     echo "✅ Configuration file found"
 fi
 
-echo "🎥 Starting Smart CCTV System..."
+echo "🎥 Starting Smart CCTV System with Web Interface..."
+echo "🌐 Web interface will be available at: http://localhost:5000"
+echo "🔐 Default login: admin / admin123"
+echo ""
 echo "Press Ctrl+C to stop"
 echo ""
 
-# Start the main application
-exec python src/main.py --config config/config.yaml
+# Start the complete system (CCTV + Web Interface)
+exec python start_system.py
