@@ -59,7 +59,7 @@ class TTSEngine:
     def _initialize_engine(self):
         """Initialize the TTS engine."""
         try:
-            if self.engine_type == "pyttsx3" and pyttsx3:
+            if self.engine_type == "pyttsx3":
                 self.engine = pyttsx3.init()
                 
                 # Set properties
