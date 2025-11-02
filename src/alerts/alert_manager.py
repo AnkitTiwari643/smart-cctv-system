@@ -8,7 +8,7 @@ from pathlib import Path
 import cv2
 
 from loguru import logger
-from utils.audio_utils import TTSEngine, SpeakerManager
+from utils.audio_utils import TTSEngine
 from utils.database import Database
 
 
@@ -66,13 +66,11 @@ class AlertManager:
         self.rules: Dict[str, AlertRule] = {}
         self.recent_alerts: List[AlertEvent] = []
         self.tts_engine = None
-        self.speaker_manager = None
         self.database = None
         self.lock = threading.Lock()
         
         # Initialize components
         self._initialize_tts()
-        self._initialize_speakers()
         self._load_alert_rules()
         
         # Create snapshots directory
@@ -91,14 +89,7 @@ class AlertManager:
             logger.error(f"Failed to initialize TTS engine: {e}")
             self.tts_engine = None
     
-    def _initialize_speakers(self):
-        """Initialize speaker manager."""
-        try:
-            self.speaker_manager = SpeakerManager(self.config)
-            logger.info("Speaker manager initialized")
-        except Exception as e:
-            logger.error(f"Failed to initialize speaker manager: {e}")
-            self.speaker_manager = None
+
     
     def _load_alert_rules(self):
         """Load alert rules from configuration."""
@@ -384,17 +375,12 @@ class AlertManager:
     
     def _execute_audio_alert(self, action: AlertAction, alert_event: AlertEvent, track) -> bool:
         """Execute audio alert action."""
-        if not self.speaker_manager or not action.message:
+        if not self.tts_engine or not action.message:
             return False
         
         try:
-            # Determine speakers to use
-            speaker_names = None
-            if action.speaker and action.speaker != "all":
-                speaker_names = [action.speaker]
-            
-            # Play audio
-            success = self.speaker_manager.play_audio(action.message, speaker_names)
+            # Play audio alert using TTS
+            success = self.tts_engine.speak(action.message, blocking=False)
             
             if success:
                 logger.info(f"Audio alert played: {action.message}")
@@ -552,15 +538,14 @@ class AlertManager:
             return True
         return False
     
-    def test_audio_alert(self, message: str, speaker: str = None) -> bool:
+    def test_audio_alert(self, message: str) -> bool:
         """Test audio alert functionality."""
         try:
-            if not self.speaker_manager:
-                logger.error("Speaker manager not available")
+            if not self.tts_engine:
+                logger.error("TTS engine not available")
                 return False
             
-            speaker_names = [speaker] if speaker else None
-            success = self.speaker_manager.play_audio(message, speaker_names)
+            success = self.tts_engine.speak(message, blocking=False)
             
             if success:
                 logger.info(f"Audio test successful: {message}")
@@ -585,6 +570,4 @@ class AlertManager:
             # TTS engine doesn't need explicit cleanup
             pass
         
-        if self.speaker_manager:
-            # Speaker manager doesn't need explicit cleanup
-            pass
+

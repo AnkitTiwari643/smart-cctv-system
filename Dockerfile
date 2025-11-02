@@ -13,7 +13,12 @@ RUN apt-get update && apt-get install -y \
     libasound2-dev \
     libportaudio2 \
     libportaudiocpp0 \
+    espeak-ng \
     espeak \
+    libespeak1 \
+    libespeak-ng1 \
+    pulseaudio \
+    alsa-utils \
     libespeak-dev \
     python3-dev \
     wget \
@@ -22,13 +27,16 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements in order of dependency complexity
 COPY requirements-minimal.txt .
 COPY requirements-audio.txt .
+COPY requirements.txt .
+
+ENV PULSE_SERVER=tcp:host.docker.internal
 
 # Install minimal dependencies first
-RUN pip install --no-cache-dir -r requirements-minimal.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Try to install audio dependencies, continue if they fail
-RUN pip install --no-cache-dir -r requirements-audio.txt || \
-    echo "Audio dependencies failed, continuing without audio support"
+# # Try to install audio dependencies, continue if they fail
+# RUN pip install --no-cache-dir -r requirements-audio.txt || \
+#     echo "Audio dependencies failed, continuing without audio support"
 
 # Copy application code
 COPY src/ ./src/

@@ -1,0 +1,25 @@
+# Development Dependencies for Smart CCTV System
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+
+# Code Quality & Formatting
+black>=23.7.0
+flake8>=6.1.0
+mypy>=1.5.0
+pre-commit>=3.3.0
+isort>=5.12.0
+
+# Documentation
+sphinx>=7.1.0
+sphinx-rtd-theme>=1.3.0
+
+# Development Tools
+jupyter>=1.0.0
+ipykernel>=6.25.0
+
+# Performance Analysis
+memory-profiler>=0.61.0
+line-profiler>=4.1.0

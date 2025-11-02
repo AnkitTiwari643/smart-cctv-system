@@ -1,4 +1,4 @@
-# Smart CCTV System - Enhanced Requirements
+# Smart CCTV System - Production Requirements
 
 # Core Dependencies
 opencv-python>=4.8.0
@@ -10,33 +10,19 @@ loguru>=0.7.0
 PyYAML>=6.0
 python-dotenv>=1.0.0
 
-# Enhanced Audio & Alerts
+# Audio & Alerts
 pyttsx3>=2.90          # Text-to-speech engine
 PyAudio>=0.2.13        # Audio I/O
 pydub>=0.25.1          # Audio processing
-pygame>=2.5.0          # Audio playback
-simpleaudio>=1.0.4     # Simple audio playback
 
-# Bluetooth Support (Linux)
-# PyBluez>=0.23        # Uncomment for Linux Bluetooth support
-
-# Platform-specific Audio
-# Windows Audio
-# pywin32>=306         # Uncomment for Windows audio APIs
-
-# macOS Audio
-# pyobjc>=9.2          # Uncomment for macOS audio APIs
-
-# Enhanced Tracking Dependencies
+# Tracking Dependencies
 scipy>=1.10.0
-scikit-learn>=1.3.0
 filterpy>=1.4.5        # Kalman filtering
-munkres>=1.1.4         # Hungarian algorithm for assignment
 
 # Data & Storage
 pandas>=2.0.0
 Pillow>=10.0.0
-sqlite3            # Built-in Python module
+# sqlite3 is a built-in Python module
 
 # Utilities & Performance
 imutils>=0.5.4
@@ -44,62 +30,10 @@ psutil>=5.9.0
 requests>=2.31.0
 tqdm>=4.65.0           # Progress bars
 
-# Web Interface (Optional)
-Flask>=2.3.0
-Flask-SocketIO>=5.3.0
-Flask-CORS>=4.0.0
-Jinja2>=3.1.0
-
-# Monitoring (Optional)
-prometheus-client>=0.17.0
-
-# Enhanced Image Processing
-scikit-image>=0.21.0   # Advanced image processing
-matplotlib>=3.7.0      # Plotting and visualization
-
-# Configuration & Environment
-python-decouple>=3.8   # Environment configuration
-click>=8.1.0           # CLI interface
-
-# Testing & Quality
-pytest>=7.4.0
-pytest-cov>=4.1.0
-pytest-mock>=3.11.0
-
-# Code Quality
-black>=23.7.0
-flake8>=6.1.0
-mypy>=1.5.0
-pre-commit>=3.3.0
-isort>=5.12.0
-
-# Documentation
-sphinx>=7.1.0         # Documentation generation
-sphinx-rtd-theme>=1.3.0
-
-# Development Tools
-jupyter>=1.0.0        # Notebook development
-ipykernel>=6.25.0     # Jupyter kernel
-
-# Security & Encryption
-cryptography>=41.0.0  # For secure configurations
-
-# Performance Monitoring
-memory-profiler>=0.61.0  # Memory usage profiling
-line-profiler>=4.1.0     # Line-by-line profiling
-
-# Computer Vision Extras
-# mediapipe>=0.10.0    # Uncomment for pose estimation
-# dlib>=19.24.0        # Uncomment for face recognition
-
-# Additional Audio Formats
-librosa>=0.10.0       # Audio analysis
-soundfile>=0.12.0     # Audio file I/O
-
-# Network & Communication
-websockets>=11.0.0    # WebSocket communication
-aiohttp>=3.8.0        # Async HTTP client/server
-
-# Database Alternatives (Optional)
-# sqlalchemy>=2.0.0   # ORM for complex database operations
-# redis>=4.6.0        # In-memory data store
+# Optional Platform-specific Audio (uncomment as needed)
+# Windows Audio:
+# pywin32>=306         # For Windows audio APIs
+# macOS Audio:
+# pyobjc>=9.2          # For macOS audio APIs
+# Linux Bluetooth:
+# PyBluez>=0.23        # For Linux Bluetooth support
